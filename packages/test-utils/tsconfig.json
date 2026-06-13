@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    "paths": {
+      "@express-addon-tests/ui-sdk-mock": ["../ui-sdk-mock/src/index.ts"],
+      "@express-addon-tests/doc-sdk-mock": ["../doc-sdk-mock/src/index.ts"],
+      "@express-addon-tests/test-bridge": ["../test-bridge/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test"]
+}

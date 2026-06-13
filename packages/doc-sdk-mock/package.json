@@ -1,0 +1,51 @@
+{
+  "name": "@express-addon-tests/doc-sdk-mock",
+  "version": "0.0.0",
+  "description": "In-process mock of the Express Document SDK (express-document-sdk) for unit and integration testing",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Keshav-poha/express-addon-test-kit",
+    "directory": "packages/doc-sdk-mock"
+  },
+  "bugs": {
+    "url": "https://github.com/Keshav-poha/express-addon-test-kit/issues"
+  },
+  "keywords": [
+    "express-addon",
+    "add-on",
+    "testing",
+    "mock",
+    "sdk",
+    "vitest",
+    "jest",
+    "document-sdk",
+    "scenegraph"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist *.tsbuildinfo"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "*",
+    "vitest": "*"
+  },
+  "peerDependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}

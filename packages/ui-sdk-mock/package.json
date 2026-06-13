@@ -1,0 +1,51 @@
+{
+  "name": "@express-addon-tests/ui-sdk-mock",
+  "version": "0.0.0",
+  "description": "In-process mock of the Express Add-on UI SDK (addOnUISdk) for unit and integration testing",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Keshav-poha/express-addon-test-kit",
+    "directory": "packages/ui-sdk-mock"
+  },
+  "bugs": {
+    "url": "https://github.com/Keshav-poha/express-addon-test-kit/issues"
+  },
+  "keywords": [
+    "express-addon",
+    "add-on",
+    "testing",
+    "mock",
+    "sdk",
+    "vitest",
+    "jest",
+    "ui-sdk"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist *.tsbuildinfo"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@adobe-ccwebext/ccweb-add-on-sdk-types": "^1.0.0",
+    "typescript": "*",
+    "vitest": "*"
+  },
+  "peerDependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}
