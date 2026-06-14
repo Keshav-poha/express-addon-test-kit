@@ -14,6 +14,8 @@ export type {
   AuthorizationResponse,
   AuthorizationResult,
   AuthorizationStatus,
+  AuthorizeWithOwnRedirectRequest,
+  AuthorizeInsideIframeRequest,
   DialogResult,
   DialogResultType,
   AlertDialogOptions,
