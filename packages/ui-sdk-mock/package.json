@@ -40,7 +40,6 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@adobe-ccwebext/ccweb-add-on-sdk-types": "^1.0.0",
     "typescript": "*",
     "vitest": "*"
   },

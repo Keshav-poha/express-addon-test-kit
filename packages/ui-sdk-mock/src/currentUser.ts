@@ -1,22 +1,31 @@
 import type { CurrentUser } from "./types.js";
 
 export class MockCurrentUser implements CurrentUser {
-    private _id: string = 'mock-user-id';
-    private _locale: string = 'en-US';
+    private _userId: string = 'mock-user-id';
+    private _isPremiumUser: boolean = false;
+    private _isAnonymousUser: boolean = false;
 
-    id(): string {
-        return this._id;
+    async userId(): Promise<string> {
+        return this._userId;
     }
 
-    locale(): string {
-        return this._locale;
+    async isPremiumUser(): Promise<boolean> {
+        return this._isPremiumUser;
     }
 
-    __setId(id: string): void {
-        this._id = id;
+    async isAnonymousUser(): Promise<boolean> {
+        return this._isAnonymousUser;
     }
 
-    __setLocale(locale: string): void {
-        this._locale = locale;
+    __setUserId(id: string): void {
+        this._userId = id;
+    }
+
+    __setIsPremiumUser(value: boolean): void {
+        this._isPremiumUser = value;
+    }
+
+    __setIsAnonymousUser(value: boolean): void {
+        this._isAnonymousUser = value;
     }
 }

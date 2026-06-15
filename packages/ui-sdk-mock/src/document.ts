@@ -7,25 +7,27 @@ import type {
     Rendition,
     PageMetadataOptions,
     PageMetadata,
-    LinkOptions
+    LinkOptions,
+    SourceMimeTypeInfo,
+    PrintQualityCheckOptions
 } from "./types.js";
 
 export class MockDocument implements Document {
-    public __calls: Record<string, any[]> = {
-        addImage: [],
-        addAnimatedImage: [],
-        addVideo: [],
-        addAudio: [],
-        createRenditions: [],
-        getPagesMetadata: [],
-        getSelectedPageIds: [],
-        id: [],
-        title: [],
-        link: [],
-        exportAllowed: [],
-        importPdf: [],
-        importPresentation: [],
-        runPrintQualityCheck: []
+    public __calls = {
+        addImage: [] as { blob: Blob, attributes?: MediaAttributes | undefined, importAddOnData?: ImportAddOnData | undefined }[],
+        addAnimatedImage: [] as { blob: Blob, attributes?: MediaAttributes | undefined, importAddOnData?: ImportAddOnData | undefined }[],
+        addVideo: [] as { blob: Blob, attributes?: MediaAttributes | undefined, importAddOnData?: ImportAddOnData | undefined }[],
+        addAudio: [] as { blob: Blob, attributes: MediaAttributes }[],
+        createRenditions: [] as { renditionOptions: RenditionOptions, renditionIntent?: RenditionIntent | undefined }[],
+        getPagesMetadata: [] as { options: PageMetadataOptions }[],
+        getSelectedPageIds: [] as {}[],
+        id: [] as {}[],
+        title: [] as {}[],
+        link: [] as { options: LinkOptions }[],
+        exportAllowed: [] as {}[],
+        importPdf: [] as { blob: Blob, attributes: MediaAttributes & SourceMimeTypeInfo }[],
+        importPresentation: [] as { blob: Blob, attributes: MediaAttributes }[],
+        runPrintQualityCheck: [] as { options: PrintQualityCheckOptions }[]
     };
 
     private _delayMs: number = 0;
@@ -114,7 +116,7 @@ export class MockDocument implements Document {
         return this.__returns.exportAllowed;
     }
 
-    importPdf(blob: Blob, attributes: any): void {
+    importPdf(blob: Blob, attributes: MediaAttributes & SourceMimeTypeInfo): void {
         this.__calls.importPdf.push({ blob, attributes });
     }
 
@@ -122,7 +124,7 @@ export class MockDocument implements Document {
         this.__calls.importPresentation.push({ blob, attributes });
     }
 
-    runPrintQualityCheck(options: any): void {
+    runPrintQualityCheck(options: PrintQualityCheckOptions): void {
         this.__calls.runPrintQualityCheck.push({ options });
     }
 }

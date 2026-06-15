@@ -1,31 +1,48 @@
-import { TypedEventEmitter } from "./events.js";
-import type { Runtime, DialogResult, DialogResultType, AlertDialogOptions, InputDialogOptions, CustomDialogOptions } from "./types.js";
+import type { Runtime, RuntimeType, Dialog } from "./types.js";
 
-export class MockRuntime extends TypedEventEmitter<any> implements Runtime {
-    public __calls: Record<string, any[]> = {
-        dialogs_showModalDialog: []
-    };
+export class MockRuntime implements Runtime {
+    public readonly type: RuntimeType = "panel" as RuntimeType;
+    public dialog?: Dialog;
 
-    private _nextDialogResult: DialogResult | null = null;
-    
-    public dialogs = {
-        showModalDialog: async (options: AlertDialogOptions | InputDialogOptions | CustomDialogOptions): Promise<DialogResult> => {
-            this.__calls.dialogs_showModalDialog.push({ options });
-            
-            if (this._nextDialogResult) {
-                const res = this._nextDialogResult;
-                this._nextDialogResult = null;
-                return res;
-            }
+    private _exposedApi: any = null;
+    private _bridge: {
+        exposeApi?: (apiObj: any) => void;
+        apiProxy?: (runtimeType: RuntimeType) => Promise<any>;
+    } | null = null;
 
-            return {
-                type: 'button' as DialogResultType,
-                buttonType: 'cancel'
-            };
+    constructor(dialog?: Dialog) {
+        if (dialog !== undefined) {
+            this.dialog = dialog;
         }
-    };
+    }
 
-    __setNextDialogResult(result: DialogResult): void {
-        this._nextDialogResult = result;
+    exposeApi<T>(apiObj: T): void {
+        if (this._bridge?.exposeApi) {
+            this._bridge.exposeApi(apiObj);
+        } else {
+            this._exposedApi = apiObj;
+        }
+    }
+
+    async apiProxy<T>(runtimeType: RuntimeType): Promise<any> {
+        if (this._bridge?.apiProxy) {
+            return this._bridge.apiProxy(runtimeType);
+        }
+
+        if (runtimeType === ("documentSandbox" as RuntimeType)) {
+            return this._exposedApi || {};
+        }
+
+        throw new Error(`Unknown runtime type: ${runtimeType}`);
+    }
+
+    __setBridge(bridge: {
+        exposeApi?: (apiObj: any) => void;
+        apiProxy?: (runtimeType: RuntimeType) => Promise<any>;
+    }): void {
+        this._bridge = bridge;
+        if (this._exposedApi && bridge.exposeApi) {
+            bridge.exposeApi(this._exposedApi);
+        }
     }
 }

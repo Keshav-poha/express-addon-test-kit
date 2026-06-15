@@ -30,7 +30,7 @@ export class MockOAuth implements OAuth {
             const { status, description } = this._nextFailure;
             this._nextFailure = null;
             return {
-                id: request.id,
+                id: 'mock-auth-id',
                 code: '',
                 redirectUri: '',
                 result: { status, description }
@@ -45,7 +45,7 @@ export class MockOAuth implements OAuth {
 
         // Default successful response
         return {
-            id: request.id,
+            id: 'mock-auth-id',
             code: 'mock-code',
             redirectUri: 'https://mock.redirect/',
             result: {
@@ -77,6 +77,6 @@ export class MockOAuth implements OAuth {
 
     async authorizeInsideIframe(request: AuthorizeInsideIframeRequest): Promise<AuthorizationResponse> {
         // Shared logic with authorize()
-        return this.authorize(request as unknown as AuthorizationRequest);
+        return this.authorize(request);
     }
 }
