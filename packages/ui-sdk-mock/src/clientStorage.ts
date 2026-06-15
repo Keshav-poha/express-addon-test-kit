@@ -22,4 +22,8 @@ export class MockClientStorage implements ClientStorage {
     async clear(): Promise<void> {
         this.storage.clear();
     }
+
+    __reset(): void {
+        this.storage.clear();
+    }
 }

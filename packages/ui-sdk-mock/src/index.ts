@@ -169,16 +169,24 @@ export const Constants = {
 export interface MockAddOnUISdkOptions {
     manifest?: Record<string, unknown>;
     entrypointType?: string;
+    readyDelayMs?: number;
 }
 
 export function createMockAddOnUISdk(options?: MockAddOnUISdkOptions): AddOnSDKAPI & { __controls: any } {
     let isReady = false;
-    let readyDelayMs = 0;
+    let readyDelayMs = options?.readyDelayMs ?? 0;
     let resolveReadyPromise: (() => void) | null = null;
     
     let readyPromise = new Promise<void>((resolve) => {
         resolveReadyPromise = resolve;
     });
+
+    if (readyDelayMs > 0) {
+        setTimeout(() => {
+            isReady = true;
+            resolveReadyPromise?.();
+        }, readyDelayMs);
+    }
 
     queueMicrotask(() => {
         if (!isReady && readyDelayMs === 0) {
@@ -275,6 +283,7 @@ export function createMockAddOnUISdk(options?: MockAddOnUISdkOptions): AddOnSDKA
                 appInstance.currentUser.__setUserId('mock-user-id');
                 appInstance.currentUser.__setIsPremiumUser(false);
                 appInstance.currentUser.__setIsAnonymousUser(false);
+                clientStorageInstance.__reset();
             }
         }
     };
