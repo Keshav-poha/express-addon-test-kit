@@ -13,6 +13,23 @@ export { MockOAuth } from "./oauth.js";
 export { MockCurrentUser } from "./currentUser.js";
 export { MockClientStorage } from "./clientStorage.js";
 
+export type { AddOnSDKAPI };
+
+export const AppEvent = {
+    themechange: "themechange",
+    localechange: "localechange",
+    formatchange: "formatchange",
+    reset: "reset",
+    dragstart: "dragstart",
+    dragend: "dragend",
+    dragcancel: "dragcancel",
+    documentIdAvailable: "documentIdAvailable",
+    documentLinkAvailable: "documentLinkAvailable",
+    documentPublishedLinkAvailable: "documentPublishedLinkAvailable",
+    documentTitleChange: "documentTitleChange",
+    documentExportAllowedChange: "documentExportAllowedChange"
+} as const;
+
 export const Constants = {
     Range: {
         currentPage: "currentPage",

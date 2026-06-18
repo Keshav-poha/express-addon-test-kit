@@ -1,14 +1,20 @@
-import { createMockAddOnUISdk, MockCurrentUser } from "@express-addon-tests/ui-sdk-mock";
+import { createMockAddOnUISdk, MockCurrentUser, AddOnSDKAPI } from "@express-addon-tests/ui-sdk-mock";
 import {
     editor,
     EllipseNode,
     RectangleNode,
     StandaloneTextNode,
     LineNode,
-    GroupNode
+    GroupNode,
+    MockExpressEditor,
+    ExpressRootNode
 } from "@express-addon-tests/doc-sdk-mock";
 
-export function createDocument(options?: { pagesCount?: number; locale?: string; theme?: string }) {
+export function createDocument(options?: { pagesCount?: number; locale?: string; theme?: string }): {
+    sdk: AddOnSDKAPI & { __controls: any };
+    editor: MockExpressEditor;
+    root: ExpressRootNode;
+} {
     const sdk = createMockAddOnUISdk({
         entrypointType: "panel"
     });

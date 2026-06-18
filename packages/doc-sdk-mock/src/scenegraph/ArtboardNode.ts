@@ -16,7 +16,7 @@ export class MockArtboardNode extends MockVisualNode {
         };
     }
 
-    get allChildren(): Readonly<Iterable<MockNode>> {
+    override get allChildren(): Readonly<Iterable<MockNode>> {
         return this.children.toArray();
     }
 

@@ -17,7 +17,7 @@ export class MockMediaContainerNode extends MockNode {
         this.mediaRectangle.parent = this;
     }
 
-    get allChildren(): Readonly<Iterable<MockNode>> {
+    override get allChildren(): Readonly<Iterable<MockNode>> {
         const list: MockNode[] = [this.mediaRectangle];
         if (this.maskShape) {
             list.push(this.maskShape);

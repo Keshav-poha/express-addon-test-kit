@@ -38,7 +38,7 @@ export class MockExpressRootNode extends MockBaseNode {
         this.pages = new MockPageList(this);
     }
 
-    get allChildren(): Readonly<Iterable<MockBaseNode>> {
+    override get allChildren(): Readonly<Iterable<MockBaseNode>> {
         return this.pages.toArray();
     }
 }

@@ -4,12 +4,27 @@ import { viewport } from "./viewport.js";
 import { fonts } from "./fonts.js";
 import * as constantsEnums from "./constants.js";
 
-export { editor } from "./editor.js";
-export { colorUtils } from "./colorUtils.js";
-export { viewport } from "./viewport.js";
-export { fonts } from "./fonts.js";
+export { editor, colorUtils, viewport, fonts };
 
 export const constants = constantsEnums;
+
+export {
+    ArrowHeadType,
+    BlendMode,
+    FillRule,
+    FillType,
+    SceneNodeType,
+    StrokePosition,
+    StrokeType,
+    TextAlignment,
+    TextLayout,
+    TextScriptStyle,
+    EditorEvent,
+    VisualEffectType,
+    TextStyleSource,
+    ParagraphListType,
+    OrderedListNumbering
+} from "./constants.js";
 
 export { MockBaseNode as BaseNode } from "./scenegraph/BaseNode.js";
 export { MockVisualNode as VisualNode } from "./scenegraph/VisualNode.js";
@@ -27,6 +42,8 @@ export { MockBitmapImage as BitmapImage } from "./scenegraph/BitmapImage.js";
 export { MockArtboardNode as ArtboardNode } from "./scenegraph/ArtboardNode.js";
 export { MockPageNode as PageNode } from "./scenegraph/PageNode.js";
 export { MockExpressRootNode as ExpressRootNode } from "./scenegraph/ExpressRootNode.js";
+export { MockExpressEditor } from "./editor.js";
+export { MockExpressContext } from "./context.js";
 
 export function __resetMockState() {
     editor.__resetMockState();

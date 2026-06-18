@@ -43,7 +43,7 @@ export class MockPageNode extends MockBaseNode {
         this.artboards.addArtboard();
     }
 
-    get allChildren(): Readonly<Iterable<MockBaseNode>> {
+    override get allChildren(): Readonly<Iterable<MockBaseNode>> {
         return this.artboards.toArray();
     }
 

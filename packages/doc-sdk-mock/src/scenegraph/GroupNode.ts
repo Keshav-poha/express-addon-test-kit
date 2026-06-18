@@ -11,11 +11,11 @@ export class MockGroupNode extends MockNode {
         this.children = new MockItemList<MockNode>(this);
     }
 
-    get allChildren(): Readonly<Iterable<MockNode>> {
+    override get allChildren(): Readonly<Iterable<MockNode>> {
         return this.children.toArray();
     }
 
-    get boundsLocal(): Readonly<{ x: number, y: number, width: number, height: number }> {
+    override get boundsLocal(): Readonly<{ x: number, y: number, width: number, height: number }> {
         if (this.children.length === 0) {
             return { x: 0, y: 0, width: 0, height: 0 };
         }
