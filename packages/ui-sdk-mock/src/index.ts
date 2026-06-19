@@ -183,12 +183,31 @@ export const Constants = {
     }
 } as any;
 
+/**
+ * Options for configuring the mock AddOnUISdk.
+ */
 export interface MockAddOnUISdkOptions {
+    /**
+     * Mock manifest.json contents.
+     */
     manifest?: Record<string, unknown>;
+    /**
+     * Entrypoint type under which the addon is loaded (e.g. 'panel', 'dialog').
+     */
     entrypointType?: string;
+    /**
+     * Delay in milliseconds before the sdk.ready promise resolves (default: 0).
+     */
     readyDelayMs?: number;
 }
 
+/**
+ * Instantiates a mock Express UI SDK object (`addOnUISdk`).
+ * Simulates asynchronous connection readiness and routes calls to in-process stubs.
+ * 
+ * @param options Initial configuration options.
+ * @returns A mock implementation of AddOnSDKAPI along with test `__controls` to simulate system states.
+ */
 export function createMockAddOnUISdk(options?: MockAddOnUISdkOptions): AddOnSDKAPI & { __controls: any } {
     let isReady = false;
     let readyDelayMs = options?.readyDelayMs ?? 0;

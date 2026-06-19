@@ -23,6 +23,14 @@ class SandboxRuntime {
     }
 }
 
+/**
+ * Creates a mock RPC bridge that connects the UI Iframe runtime and the Document Sandbox runtime.
+ * This simulates the Comlink asynchronous RPC protocol across the iframe boundary.
+ * 
+ * @param options Configuration options for the bridge.
+ * @param options.timeout Timeout in milliseconds to wait for a runtime to expose its API (default: 5000ms).
+ * @returns An object containing the `iframeRuntime` (MockRuntime) and the `sandboxRuntime` (MockSandboxRuntime).
+ */
 export function createBridge(options?: { timeout?: number }) {
     const timeout = options?.timeout ?? 5000;
 
