@@ -1,7 +1,7 @@
 {
   "name": "@express-addon-tests/test-utils",
   "version": "0.0.0",
-  "description": "Test factories, simulation helpers, and framework setup for Express add-on testing",
+  "description": "Mock factories, event simulation helpers, and test runner setup for Express add-on testing",
   "license": "MIT",
   "type": "module",
   "repository": {
