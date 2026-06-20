@@ -4,7 +4,7 @@ import { editor } from "../editor.js";
 import { MockBaseNode } from "./BaseNode.js";
 
 function checkEditAllowed(node: MockBaseNode) {
-    if (editor.__controls.strictEditMode && !(editor as any)._isEditAllowed) {
+    if (editor.__controls.strictEditMode && !editor.isEditAllowed) {
         let current: MockBaseNode | undefined = node;
         let attached = false;
         while (current) {
@@ -211,7 +211,8 @@ export class MockNode extends MockVisualNode {
     }
 
     protected _clone(): this {
-        return new (this.constructor as any)() as this;
+        const ctor = this.constructor as new () => this;
+        return new ctor();
     }
 
     /**
@@ -240,7 +241,7 @@ export class MockNode extends MockVisualNode {
         return clone as this;
     }
 
-    protected _copySubclassProperties(clone: any): void {
+    protected _copySubclassProperties(clone: MockNode): void {
         // Overridden by subclasses
     }
 

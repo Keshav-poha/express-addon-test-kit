@@ -37,7 +37,7 @@ function createRecursiveProxy(targetGetter: () => unknown, path: string[] = []):
                     try {
                         const target = targetGetter();
                         if (!target) {
-                            throw new Error("API not exposed yet.");
+                            throw new Error("API not exposed yet. The target runtime has not registered its API. Make sure that you await runtime.apiProxy() and that runtime.exposeApi() is called on the other side.");
                         }
                         const val = getPath(target, path);
                         if (val && typeof (val as Record<string, unknown>).then === "function") {
@@ -59,7 +59,7 @@ function createRecursiveProxy(targetGetter: () => unknown, path: string[] = []):
             try {
                 const target = targetGetter();
                 if (!target) {
-                    throw new Error("API not exposed yet.");
+                    throw new Error("API not exposed yet. The target runtime has not registered its API. Make sure that you await runtime.apiProxy() and that runtime.exposeApi() is called on the other side.");
                 }
                 if (path.length === 0) {
                     throw new TypeError("Proxy root is not a function");

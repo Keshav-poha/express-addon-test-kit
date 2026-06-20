@@ -1,6 +1,6 @@
 {
   "name": "@express-addon-tests/ui-sdk-mock",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "In-process mock of the Express Add-on UI SDK (addOnUISdk) for unit and integration testing",
   "license": "MIT",
   "type": "module",
@@ -14,6 +14,7 @@
   },
   "keywords": [
     "express-addon",
+    "adobe-express",
     "add-on",
     "testing",
     "mock",
@@ -24,19 +25,21 @@
   ],
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/cjs/index.js"
     }
   },
   "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
-    "build": "tsc --project tsconfig.json",
+    "build": "tsc --project tsconfig.json && tsc --project tsconfig.cjs.json && node ../../scripts/postbuild.js",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "clean": "rm -rf dist *.tsbuildinfo"
+    "clean": "node -e \"const fs = require('fs'); ['dist', 'tsconfig.tsbuildinfo', 'tsconfig.cjs.tsbuildinfo'].forEach(p => fs.rmSync(p, { recursive: true, force: true }))\""
   },
   "dependencies": {},
   "devDependencies": {

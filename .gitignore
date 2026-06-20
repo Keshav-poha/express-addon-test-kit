@@ -6,6 +6,8 @@ coverage/
 *.log
 CLAUDE.MD
 AUDIT.MD
+.env
+.env.*
 
 # Compiled outputs from local compiler/IDE builds
 packages/**/*.js

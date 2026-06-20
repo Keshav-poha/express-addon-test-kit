@@ -1,5 +1,6 @@
 import { MockFillableNode } from "./FillableNode.js";
-import { SceneNodeType } from "../constants.js";
+import { SceneNodeType, MIN_DIMENSION } from "../constants.js";
+import { MockNode } from "./Node.js";
 
 export class MockRectangleNode extends MockFillableNode {
     public topLeftCornerRadius: number = 0;
@@ -16,8 +17,8 @@ export class MockRectangleNode extends MockFillableNode {
     }
 
     set width(val: number) {
-        if (val <= 0) {
-            throw new RangeError("width must be greater than 0");
+        if (val < MIN_DIMENSION) {
+            throw new RangeError(`width must be at least ${MIN_DIMENSION}`);
         }
         this._width = val;
     }
@@ -27,17 +28,19 @@ export class MockRectangleNode extends MockFillableNode {
     }
 
     set height(val: number) {
-        if (val <= 0) {
-            throw new RangeError("height must be greater than 0");
+        if (val < MIN_DIMENSION) {
+            throw new RangeError(`height must be at least ${MIN_DIMENSION}`);
         }
         this._height = val;
     }
 
-    protected override _copySubclassProperties(clone: any): void {
+    protected override _copySubclassProperties(clone: MockNode): void {
         super._copySubclassProperties(clone);
-        clone.topLeftCornerRadius = this.topLeftCornerRadius;
-        clone.topRightCornerRadius = this.topRightCornerRadius;
-        clone.bottomLeftCornerRadius = this.bottomLeftCornerRadius;
-        clone.bottomRightCornerRadius = this.bottomRightCornerRadius;
+        if (clone instanceof MockRectangleNode) {
+            clone.topLeftCornerRadius = this.topLeftCornerRadius;
+            clone.topRightCornerRadius = this.topRightCornerRadius;
+            clone.bottomLeftCornerRadius = this.bottomLeftCornerRadius;
+            clone.bottomRightCornerRadius = this.bottomRightCornerRadius;
+        }
     }
 }

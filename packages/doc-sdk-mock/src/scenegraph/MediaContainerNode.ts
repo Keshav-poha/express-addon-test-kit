@@ -25,17 +25,19 @@ export class MockMediaContainerNode extends MockNode {
         this.mediaRectangle.parent = this;
     }
 
-    protected override _copySubclassProperties(clone: MockMediaContainerNode): void {
+    protected override _copySubclassProperties(clone: MockNode): void {
         super._copySubclassProperties(clone);
-        clone._bitmapImage = this._bitmapImage;
-        const rectClone = this.mediaRectangle.cloneInPlace();
-        clone.mediaRectangle = rectClone;
-        rectClone.parent = clone;
+        if (clone instanceof MockMediaContainerNode) {
+            clone._bitmapImage = this._bitmapImage;
+            const rectClone = this.mediaRectangle.cloneInPlace();
+            clone.mediaRectangle = rectClone;
+            rectClone.parent = clone;
 
-        if (this.maskShape) {
-            const maskClone = this.maskShape.cloneInPlace() as MockNode;
-            clone.maskShape = maskClone;
-            maskClone.parent = clone;
+            if (this.maskShape) {
+                const maskClone = this.maskShape.cloneInPlace() as MockNode;
+                clone.maskShape = maskClone;
+                maskClone.parent = clone;
+            }
         }
     }
 
@@ -44,7 +46,7 @@ export class MockMediaContainerNode extends MockNode {
             this.maskShape = undefined;
             child.parent = undefined;
         } else if (child === this.mediaRectangle) {
-            (this as any).mediaRectangle = undefined;
+            this.mediaRectangle = undefined!;
             child.parent = undefined;
         }
     }

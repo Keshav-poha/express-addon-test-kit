@@ -1,7 +1,11 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
 import addOnUISdk, { createMockAddOnUISdk, SDKNotReadyError } from "../src/index.js";
 
 describe("UI SDK Mock Refactoring", () => {
+    afterEach(() => {
+        addOnUISdk.__controls.resetAll();
+    });
+
     it("should export a default instance of the mock SDK", () => {
         expect(addOnUISdk).toBeDefined();
         expect(addOnUISdk.apiVersion).toBe("1.0.0");

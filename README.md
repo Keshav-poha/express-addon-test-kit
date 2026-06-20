@@ -4,6 +4,23 @@
 
 Testing Adobe Express add-ons historically required complex end-to-end setups (like Playwright or Puppeteer) or writing manual stubs for every single SDK method. Because the real `addOnUISdk` and `express-document-sdk` are not available in a pure Node.js environment, developers struggle to write fast, reliable unit and integration tests. `@express-addon-tests` solves this problem by providing high-fidelity, in-process, synchronous mocks, factories, event simulators, and a mock RPC bridge that links the runtimes together.
 
+## Quick Example
+
+```typescript
+import { createDocument } from "@express-addon-tests/test-utils";
+import { expect, it } from "vitest";
+
+it("should create a rectangle and append it to the document", () => {
+    const { editor } = createDocument();
+    const rect = editor.createRectangle();
+    rect.width = 150;
+    
+    editor.context.insertionParent.children.append(rect);
+    expect(editor.context.insertionParent.children.length).toBe(1);
+    expect(rect.width).toBe(150);
+});
+```
+
 ---
 
 ## Overview

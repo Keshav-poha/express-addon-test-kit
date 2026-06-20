@@ -1,5 +1,5 @@
 import { MockNode } from "./Node.js";
-import { SceneNodeType } from "../constants.js";
+import { SceneNodeType, TextLayout } from "../constants.js";
 
 export class MockTextContentModel {
     private _text: string = "";
@@ -17,11 +17,11 @@ export class MockTextContentModel {
     }
 
     // Mock implementations for styling and layout APIs
-    characterStyleRanges(): Iterable<any> { return []; }
-    applyCharacterStyles(styles: any, start?: number, end?: number): void { /* no-op */ }
+    characterStyleRanges(): Iterable<unknown> { return []; }
+    applyCharacterStyles(styles: unknown, start?: number, end?: number): void { /* no-op */ }
     
-    paragraphStyleRanges(): Iterable<any> { return []; }
-    applyParagraphStyles(styles: any, start?: number, end?: number): void { /* no-op */ }
+    paragraphStyleRanges(): Iterable<unknown> { return []; }
+    applyParagraphStyles(styles: unknown, start?: number, end?: number): void { /* no-op */ }
 
     appendText(text: string): void { this._text += text; }
     insertText(text: string, index: number): void {
@@ -37,7 +37,7 @@ export class MockTextContentModel {
 
 export class MockStandaloneTextNode extends MockNode {
     public readonly fullContent: MockTextContentModel;
-    public layout: any = { type: "autoWidth" };
+    public layout: { type: TextLayout.autoWidth } | { type: TextLayout.autoHeight; width: number } | { type: TextLayout.area; width: number; height: number } = { type: TextLayout.autoWidth };
 
     constructor(initialText: string = "") {
         super(SceneNodeType.standaloneText);
@@ -52,9 +52,11 @@ export class MockStandaloneTextNode extends MockNode {
         this.fullContent.text = val;
     }
 
-    protected override _copySubclassProperties(clone: any): void {
+    protected override _copySubclassProperties(clone: MockNode): void {
         super._copySubclassProperties(clone);
-        clone.fullContent.text = this.fullContent.text;
-        clone.layout = { ...this.layout };
+        if (clone instanceof MockStandaloneTextNode) {
+            clone.fullContent.text = this.fullContent.text;
+            clone.layout = { ...this.layout };
+        }
     }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@express-addon-tests/test-utils",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Mock factories, event simulation helpers, and test runner setup for Express add-on testing",
   "license": "MIT",
   "type": "module",
@@ -14,6 +14,7 @@
   },
   "keywords": [
     "express-addon",
+    "adobe-express",
     "add-on",
     "testing",
     "mock",
@@ -25,35 +26,41 @@
   ],
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/cjs/index.js"
     },
     "./setup/vitest": {
+      "types": "./dist/setup/vitest.d.ts",
       "import": "./dist/setup/vitest.js",
-      "types": "./dist/setup/vitest.d.ts"
+      "require": "./dist/cjs/setup/vitest.js"
     },
     "./setup/jest": {
+      "types": "./dist/setup/jest.d.ts",
       "import": "./dist/setup/jest.js",
-      "types": "./dist/setup/jest.d.ts"
+      "require": "./dist/cjs/setup/jest.js"
     },
     "./factories": {
+      "types": "./dist/factories/index.d.ts",
       "import": "./dist/factories/index.js",
-      "types": "./dist/factories/index.d.ts"
+      "require": "./dist/cjs/factories/index.js"
     },
     "./simulate": {
+      "types": "./dist/simulate/index.d.ts",
       "import": "./dist/simulate/index.js",
-      "types": "./dist/simulate/index.d.ts"
+      "require": "./dist/cjs/simulate/index.js"
     }
   },
   "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
-    "build": "tsc --project tsconfig.json",
+    "build": "tsc --project tsconfig.json && tsc --project tsconfig.cjs.json && node ../../scripts/postbuild.js",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "clean": "rm -rf dist *.tsbuildinfo"
+    "clean": "node -e \"const fs = require('fs'); ['dist', 'tsconfig.tsbuildinfo', 'tsconfig.cjs.tsbuildinfo'].forEach(p => fs.rmSync(p, { recursive: true, force: true }))\""
   },
   "dependencies": {
     "@express-addon-tests/ui-sdk-mock": "workspace:*",

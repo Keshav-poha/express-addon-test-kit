@@ -1,7 +1,7 @@
 import { MockBaseNode } from "./BaseNode.js";
 import { MockRestrictedItemList } from "./RestrictedItemList.js";
 import { MockArtboardNode } from "./ArtboardNode.js";
-import { SceneNodeType } from "../constants.js";
+import { SceneNodeType, MIN_DIMENSION } from "../constants.js";
 
 /**
  * A list of artboards belonging to a single page.
@@ -79,8 +79,8 @@ export class MockPageNode extends MockBaseNode {
     }
 
     set width(val: number) {
-        if (val <= 0) {
-            throw new RangeError("width must be greater than 0");
+        if (val < MIN_DIMENSION) {
+            throw new RangeError(`width must be at least ${MIN_DIMENSION}`);
         }
         this._width = val;
     }
@@ -91,8 +91,8 @@ export class MockPageNode extends MockBaseNode {
     }
 
     set height(val: number) {
-        if (val <= 0) {
-            throw new RangeError("height must be greater than 0");
+        if (val < MIN_DIMENSION) {
+            throw new RangeError(`height must be at least ${MIN_DIMENSION}`);
         }
         this._height = val;
     }

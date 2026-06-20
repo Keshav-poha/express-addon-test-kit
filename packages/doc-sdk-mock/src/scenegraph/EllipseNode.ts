@@ -1,5 +1,6 @@
 import { MockFillableNode } from "./FillableNode.js";
-import { SceneNodeType } from "../constants.js";
+import { SceneNodeType, MIN_DIMENSION } from "../constants.js";
+import { MockNode } from "./Node.js";
 
 export class MockEllipseNode extends MockFillableNode {
     private _rx: number = 50;
@@ -16,8 +17,8 @@ export class MockEllipseNode extends MockFillableNode {
     }
 
     set rx(val: number) {
-        if (val <= 0) {
-            throw new RangeError("rx must be greater than 0");
+        if (val < MIN_DIMENSION / 2) {
+            throw new RangeError(`rx must be at least ${MIN_DIMENSION / 2}`);
         }
         this._rx = val;
         this._width = val * 2;
@@ -28,16 +29,18 @@ export class MockEllipseNode extends MockFillableNode {
     }
 
     set ry(val: number) {
-        if (val <= 0) {
-            throw new RangeError("ry must be greater than 0");
+        if (val < MIN_DIMENSION / 2) {
+            throw new RangeError(`ry must be at least ${MIN_DIMENSION / 2}`);
         }
         this._ry = val;
         this._height = val * 2;
     }
 
-    protected override _copySubclassProperties(clone: any): void {
+    protected override _copySubclassProperties(clone: MockNode): void {
         super._copySubclassProperties(clone);
-        clone._rx = this._rx;
-        clone._ry = this._ry;
+        if (clone instanceof MockEllipseNode) {
+            clone._rx = this._rx;
+            clone._ry = this._ry;
+        }
     }
 }

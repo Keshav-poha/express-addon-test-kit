@@ -1,7 +1,11 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { TypedEventEmitter } from "../src/events.js";
+import addOnUISdk from "../src/index.js";
 
 describe("TypedEventEmitter", () => {
+    afterEach(() => {
+        addOnUISdk.__controls.resetAll();
+    });
     it("should register and call handlers", async () => {
         const emitter = new TypedEventEmitter<{ test: string }>();
         const handler = vi.fn();

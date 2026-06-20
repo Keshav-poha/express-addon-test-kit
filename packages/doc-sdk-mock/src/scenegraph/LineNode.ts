@@ -1,5 +1,6 @@
 import { MockStrokableNode } from "./StrokableNode.js";
 import { SceneNodeType, ArrowHeadType } from "../constants.js";
+import { MockNode } from "./Node.js";
 
 export class MockLineNode extends MockStrokableNode {
     private _startX: number = 0;
@@ -27,13 +28,15 @@ export class MockLineNode extends MockStrokableNode {
         this._height = Math.abs(endY - startY);
     }
 
-    protected override _copySubclassProperties(clone: any): void {
+    protected override _copySubclassProperties(clone: MockNode): void {
         super._copySubclassProperties(clone);
-        clone._startX = this.startX;
-        clone._startY = this.startY;
-        clone._endX = this.endX;
-        clone._endY = this.endY;
-        clone.startArrowHeadType = this.startArrowHeadType;
-        clone.endArrowHeadType = this.endArrowHeadType;
+        if (clone instanceof MockLineNode) {
+            clone._startX = this.startX;
+            clone._startY = this.startY;
+            clone._endX = this.endX;
+            clone._endY = this.endY;
+            clone.startArrowHeadType = this.startArrowHeadType;
+            clone.endArrowHeadType = this.endArrowHeadType;
+        }
     }
 }

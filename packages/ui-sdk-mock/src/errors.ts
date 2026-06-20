@@ -15,7 +15,7 @@ export class SDKNotReadyError extends Error {
  */
 export class UnknownRuntimeError extends Error {
     constructor(runtimeType: string) {
-        super(`Unknown runtime type: ${runtimeType}`);
+        super(`Unknown runtime type: "${runtimeType}". Valid runtime types are: "panel", "dialog", "script", "documentSandbox", "command". Please check your manifest or initialization options.`);
         this.name = "UnknownRuntimeError";
         Object.setPrototypeOf(this, UnknownRuntimeError.prototype);
     }

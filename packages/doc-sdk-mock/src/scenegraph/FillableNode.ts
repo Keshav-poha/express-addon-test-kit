@@ -1,5 +1,6 @@
 import { MockStrokableNode } from "./StrokableNode.js";
 import { SceneNodeType } from "../constants.js";
+import { MockNode } from "./Node.js";
 
 /**
  * A solid color fill descriptor.
@@ -37,9 +38,9 @@ export class MockFillableNode extends MockStrokableNode {
         }
     }
 
-    protected override _copySubclassProperties(clone: any): void {
+    protected override _copySubclassProperties(clone: MockNode): void {
         super._copySubclassProperties(clone);
-        if (this._fill) {
+        if (clone instanceof MockFillableNode && this._fill) {
             clone._fill = { ...this._fill, color: { ...this._fill.color } };
         }
     }

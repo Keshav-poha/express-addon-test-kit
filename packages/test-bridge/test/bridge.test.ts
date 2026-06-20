@@ -122,4 +122,18 @@ describe("TestBridge", () => {
         expect(await proxy.nested.method("hello")).toBe("echo: hello");
         expect(await proxy.nested.deeply.selfValue()).toBe("deep");
     });
+
+    it("should propagate errors thrown by exposed APIs through the proxy", async () => {
+        const { iframeRuntime, sandboxRuntime } = createBridge();
+
+        const sandboxApi = {
+            throwError: () => {
+                throw new Error("Simulated failure in sandbox API");
+            }
+        };
+        sandboxRuntime.exposeApi(sandboxApi);
+
+        const sandboxProxy = await iframeRuntime.apiProxy("documentSandbox" as any);
+        await expect(sandboxProxy.throwError()).rejects.toThrow("Simulated failure in sandbox API");
+    });
 });

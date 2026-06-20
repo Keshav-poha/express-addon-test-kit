@@ -2,7 +2,7 @@ import { MockApplication } from "./app.js";
 import { MockRuntime } from "./runtime.js";
 import { MockClientStorage } from "./clientStorage.js";
 import { SDKNotReadyError } from "./errors.js";
-import type { AddOnSDKAPI, Application, EntrypointType } from "./types.js";
+import type { AddOnSDKAPI, Application, EntrypointType, DialogResult } from "./types.js";
 
 export { SDKNotReadyError, UnknownRuntimeError } from "./errors.js";
 export { MockApplication } from "./app.js";
@@ -13,7 +13,7 @@ export { MockOAuth } from "./oauth.js";
 export { MockCurrentUser } from "./currentUser.js";
 export { MockClientStorage } from "./clientStorage.js";
 
-export type { AddOnSDKAPI };
+export type { AddOnSDKAPI, DialogResult };
 
 export const AppEvent = {
     themechange: "themechange",

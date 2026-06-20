@@ -1,4 +1,4 @@
-import { AddOnSDKAPI, MockApplication } from "@express-addon-tests/ui-sdk-mock";
+import { AddOnSDKAPI, MockApplication, DialogResult } from "@express-addon-tests/ui-sdk-mock";
 import { MockExpressContext, Node } from "@express-addon-tests/doc-sdk-mock";
 
 /**
@@ -228,4 +228,16 @@ export function setupOAuthMockFailure(
 ): void {
     const app = sdk.app as unknown as MockApplication;
     app.oauth.__setNextFailure(status, description);
+}
+
+/**
+ * Simulates a modal dialog result returned to the add-on UI.
+ * Sets the next dialog result on the mock application stubs.
+ * 
+ * @param sdk The Mock AddOnUISdk instance.
+ * @param result The simulated DialogResult.
+ */
+export function simulateDialogResult(sdk: AddOnSDKAPI, result: DialogResult): void {
+    const app = sdk.app as unknown as MockApplication;
+    app.__setNextDialogResult(result);
 }

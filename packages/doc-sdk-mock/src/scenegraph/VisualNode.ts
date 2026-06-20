@@ -46,8 +46,9 @@ function getMatrixToRoot(node: MockVisualNode): [number, number, number, number,
     let matrix: [number, number, number, number, number, number] = [1, 0, 0, 1, 0, 0];
     
     while (current) {
-        if (typeof (current as any).transformMatrix !== "undefined") {
-            matrix = multiplyMatrices((current as any).transformMatrix, matrix);
+        if ("transformMatrix" in current) {
+            const transformed = current as unknown as { transformMatrix: [number, number, number, number, number, number] };
+            matrix = multiplyMatrices(transformed.transformMatrix, matrix);
         }
         current = current.parent as MockVisualNode | undefined;
     }

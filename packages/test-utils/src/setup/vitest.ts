@@ -1,6 +1,6 @@
 import { afterEach } from "vitest";
 import { __resetMockState as resetDoc } from "@express-addon-tests/doc-sdk-mock";
-import addOnUISdk from "@express-addon-tests/ui-sdk-mock";
+import addOnUISdk, { MockSDKControls } from "@express-addon-tests/ui-sdk-mock";
 
 /**
  * Registers global Vitest hooks for the Express Add-on Test Kit.
@@ -9,8 +9,9 @@ import addOnUISdk from "@express-addon-tests/ui-sdk-mock";
 export function setupVitest(): void {
     afterEach(() => {
         resetDoc();
-        if (addOnUISdk && typeof (addOnUISdk as any).__controls?.resetAll === "function") {
-            (addOnUISdk as any).__controls.resetAll();
+        const sdk = addOnUISdk as unknown as { __controls?: MockSDKControls };
+        if (sdk && typeof sdk.__controls?.resetAll === "function") {
+            sdk.__controls.resetAll();
         }
     });
 }

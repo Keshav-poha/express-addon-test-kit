@@ -17,7 +17,7 @@ export class MockUI implements UI {
         return this._locale;
     }
 
-    get theme(): string {
+    get theme(): UiTheme {
         return this._theme;
     }
 

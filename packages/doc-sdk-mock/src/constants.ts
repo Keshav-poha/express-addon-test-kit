@@ -108,3 +108,5 @@ export enum OrderedListNumbering {
     lowerRoman = "lowerRoman",
     upperRoman = "upperRoman"
 }
+
+export const MIN_DIMENSION = 1;
