@@ -19,11 +19,15 @@ export function createDocument(options?: { pagesCount?: number; locale?: string;
         entrypointType: "panel"
     });
     
-    if (options?.locale) {
-        sdk.app.ui.__setLocale(options.locale);
-    }
-    if (options?.theme) {
-        sdk.app.ui.__setTheme(options.theme as any);
+    if (options?.locale || options?.theme) {
+        sdk.ready.then(() => {
+            if (options.locale) {
+                sdk.app.ui.__setLocale(options.locale);
+            }
+            if (options.theme) {
+                sdk.app.ui.__setTheme(options.theme as any);
+            }
+        });
     }
 
     const root = editor.documentRoot;
