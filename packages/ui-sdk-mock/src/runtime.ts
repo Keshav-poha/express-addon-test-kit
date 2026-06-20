@@ -14,18 +14,18 @@ export interface RuntimeBridge {
     apiProxy?: <T>(runtimeType: RuntimeType) => Promise<T>;
 }
 
-function getPath(obj: any, path: string[]): any {
+function getPath(obj: unknown, path: string[]): unknown {
     let curr = obj;
     for (const prop of path) {
         if (curr === null || curr === undefined) {
             throw new TypeError(`Cannot read properties of ${curr} (reading '${prop}')`);
         }
-        curr = curr[prop];
+        curr = (curr as Record<string, unknown>)[prop];
     }
     return curr;
 }
 
-function createRecursiveProxy(targetGetter: () => any, path: string[] = []): any {
+function createRecursiveProxy(targetGetter: () => unknown, path: string[] = []): unknown {
     const dummyTarget = () => {};
     return new Proxy(dummyTarget, {
         get(t, prop: string | symbol) {
@@ -33,15 +33,15 @@ function createRecursiveProxy(targetGetter: () => any, path: string[] = []): any
                 if (path.length === 0) {
                     return undefined;
                 }
-                return (resolve: any, reject: any) => {
+                return (resolve: (val: unknown) => void, reject: (err: unknown) => void) => {
                     try {
                         const target = targetGetter();
                         if (!target) {
                             throw new Error("API not exposed yet.");
                         }
                         const val = getPath(target, path);
-                        if (val && typeof val.then === "function") {
-                            val.then(resolve, reject);
+                        if (val && typeof (val as Record<string, unknown>).then === "function") {
+                            ((val as Record<string, unknown>).then as Function)(resolve, reject);
                         } else {
                             resolve(val);
                         }
@@ -66,7 +66,7 @@ function createRecursiveProxy(targetGetter: () => any, path: string[] = []): any
                 }
                 const parentPath = path.slice(0, -1);
                 const lastProp = path[path.length - 1] as string;
-                const parentVal = getPath(target, parentPath);
+                const parentVal = getPath(target, parentPath) as Record<string, unknown>;
                 if (parentVal === null || parentVal === undefined) {
                     throw new TypeError(`Cannot read properties of ${parentVal} (reading '${lastProp}')`);
                 }
@@ -75,7 +75,7 @@ function createRecursiveProxy(targetGetter: () => any, path: string[] = []): any
                     throw new TypeError(`${path.join(".")} is not a function`);
                 }
                 const result = fn.apply(parentVal, argumentsList);
-                if (result && typeof result.then === "function") {
+                if (result && typeof (result as Record<string, unknown>).then === "function") {
                     return result;
                 }
                 return Promise.resolve(result);
@@ -127,6 +127,10 @@ export class MockRuntime implements Runtime {
     async apiProxy<T>(runtimeType: RuntimeType): Promise<T> {
         if (this._bridge?.apiProxy) {
             return this._bridge.apiProxy<T>(runtimeType);
+        }
+
+        if (runtimeType === this.type) {
+            return createComlinkProxy(() => this._exposedApi || {}) as unknown as T;
         }
 
         if (runtimeType === ("documentSandbox" as RuntimeType)) {

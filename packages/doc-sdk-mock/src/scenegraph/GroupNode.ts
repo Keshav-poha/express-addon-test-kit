@@ -21,9 +21,10 @@ export class MockGroupNode extends MockNode {
     protected override _copySubclassProperties(clone: MockGroupNode): void {
         super._copySubclassProperties(clone);
         if (this.maskShape) {
-            // Temporarily clear parent to avoid automatic insertion in current parent
-            const maskClone = this.maskShape.cloneInPlace() as MockNode;
-            clone.maskShape = maskClone;
+            const oldParent = this.maskShape.parent;
+            this.maskShape.parent = undefined;
+            clone.maskShape = this.maskShape.cloneInPlace() as MockNode;
+            this.maskShape.parent = oldParent;
         }
         const clonedChildren = this.children.toArray().map(child => child.cloneInPlace() as MockNode);
         clone.children.append(...clonedChildren);
@@ -54,6 +55,9 @@ export class MockGroupNode extends MockNode {
      * Computes the bounding box of this group as the union of all children's bounding boxes.
      */
     override get boundsLocal(): Readonly<{ x: number; y: number; width: number; height: number }> {
+        if (this.maskShape) {
+            return this.maskShape.boundsLocal;
+        }
         if (this.children.length === 0) {
             return { x: 0, y: 0, width: 0, height: 0 };
         }

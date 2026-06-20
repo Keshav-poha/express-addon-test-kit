@@ -2,10 +2,15 @@ import { MockStrokableNode } from "./StrokableNode.js";
 import { SceneNodeType, ArrowHeadType } from "../constants.js";
 
 export class MockLineNode extends MockStrokableNode {
-    public startX: number = 0;
-    public startY: number = 0;
-    public endX: number = 100;
-    public endY: number = 0;
+    private _startX: number = 0;
+    private _startY: number = 0;
+    private _endX: number = 100;
+    private _endY: number = 0;
+
+    get startX(): number { return this._startX; }
+    get startY(): number { return this._startY; }
+    get endX(): number { return this._endX; }
+    get endY(): number { return this._endY; }
     public startArrowHeadType: ArrowHeadType = ArrowHeadType.none;
     public endArrowHeadType: ArrowHeadType = ArrowHeadType.none;
 
@@ -14,20 +19,20 @@ export class MockLineNode extends MockStrokableNode {
     }
 
     setEndPoints(startX: number, startY: number, endX: number, endY: number): void {
-        this.startX = startX;
-        this.startY = startY;
-        this.endX = endX;
-        this.endY = endY;
+        this._startX = startX;
+        this._startY = startY;
+        this._endX = endX;
+        this._endY = endY;
         this._width = Math.abs(endX - startX);
         this._height = Math.abs(endY - startY);
     }
 
     protected override _copySubclassProperties(clone: any): void {
         super._copySubclassProperties(clone);
-        clone.startX = this.startX;
-        clone.startY = this.startY;
-        clone.endX = this.endX;
-        clone.endY = this.endY;
+        clone._startX = this.startX;
+        clone._startY = this.startY;
+        clone._endX = this.endX;
+        clone._endY = this.endY;
         clone.startArrowHeadType = this.startArrowHeadType;
         clone.endArrowHeadType = this.endArrowHeadType;
     }

@@ -15,10 +15,29 @@ export class MockTextContentModel {
     set text(val: string) {
         this._text = val;
     }
+
+    // Mock implementations for styling and layout APIs
+    characterStyleRanges(): Iterable<any> { return []; }
+    applyCharacterStyles(styles: any, start?: number, end?: number): void { /* no-op */ }
+    
+    paragraphStyleRanges(): Iterable<any> { return []; }
+    applyParagraphStyles(styles: any, start?: number, end?: number): void { /* no-op */ }
+
+    appendText(text: string): void { this._text += text; }
+    insertText(text: string, index: number): void {
+        this._text = this._text.substring(0, index) + text + this._text.substring(index);
+    }
+    replaceText(text: string, start: number, end: number): void {
+        this._text = this._text.substring(0, start) + text + this._text.substring(end);
+    }
+    deleteText(start: number, end: number): void {
+        this._text = this._text.substring(0, start) + this._text.substring(end);
+    }
 }
 
 export class MockStandaloneTextNode extends MockNode {
     public readonly fullContent: MockTextContentModel;
+    public layout: any = { type: "autoWidth" };
 
     constructor(initialText: string = "") {
         super(SceneNodeType.standaloneText);
@@ -36,5 +55,6 @@ export class MockStandaloneTextNode extends MockNode {
     protected override _copySubclassProperties(clone: any): void {
         super._copySubclassProperties(clone);
         clone.fullContent.text = this.fullContent.text;
+        clone.layout = { ...this.layout };
     }
 }

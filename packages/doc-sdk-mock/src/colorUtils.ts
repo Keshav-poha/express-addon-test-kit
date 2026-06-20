@@ -29,9 +29,28 @@ export class MockColorUtils {
      * @example
      * const red = colorUtils.fromRGB(1, 0, 0);
      */
-    fromRGB(red: number, green: number, blue: number, alpha: number = 1.0): Color {
-        this._validate(red, green, blue, alpha);
-        return { red, green, blue, alpha };
+    fromRGB(color: { red: number; green: number; blue: number; alpha?: number }): Color;
+    fromRGB(red: number, green: number, blue: number, alpha?: number): Color;
+    fromRGB(
+        redOrColor: number | { red: number; green: number; blue: number; alpha?: number },
+        green?: number,
+        blue?: number,
+        alpha: number = 1.0
+    ): Color {
+        if (typeof redOrColor === "object") {
+            const r = redOrColor.red;
+            const g = redOrColor.green;
+            const b = redOrColor.blue;
+            const a = redOrColor.alpha ?? 1.0;
+            this._validate(r, g, b, a);
+            return { red: r, green: g, blue: b, alpha: a };
+        }
+        
+        const r = redOrColor;
+        const g = green as number;
+        const b = blue as number;
+        this._validate(r, g, b, alpha);
+        return { red: r, green: g, blue: b, alpha };
     }
 
     /**

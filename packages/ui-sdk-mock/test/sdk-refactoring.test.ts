@@ -77,7 +77,7 @@ describe("UI SDK Mock Refactoring", () => {
         sdk.instance.runtime.exposeApi(mockSandboxApi);
 
         // Get proxy on UI side
-        const proxy: any = await sdk.instance.runtime.apiProxy("documentSandbox");
+        const proxy: any = await sdk.instance.runtime.apiProxy("panel" as any);
 
         // Test property retrieval
         expect(await proxy.version).toBe("1.2.3");

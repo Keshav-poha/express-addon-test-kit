@@ -67,30 +67,25 @@ export class MockApplication extends TypedEventEmitter<AppEventsTypeMap> impleme
     public readonly oauth: MockOAuth;
     public readonly currentUser: MockCurrentUser;
     public readonly command: Command;
-    public devFlags: DevFlags;
+    public devFlags!: DevFlags;
 
     /** Call-log for all methods invoked on this mock. Useful for test assertions. */
-    public __calls = {
-        enableDragToDocument: [] as { element: HTMLElement; dragCallbacks: DragCallbacks; dragOptions?: DragOptions | undefined }[],
-        registerIframe: [] as { element: HTMLIFrameElement }[],
-        showModalDialog: [] as { dialogOptions: AlertDialogOptions | InputDialogOptions | CustomDialogOptions }[],
-        showColorPicker: [] as { anchorElement: HTMLElement; options?: ColorPickerOptions | undefined }[],
-        hideColorPicker: [] as Record<string, never>[],
-        startPremiumUpgradeIfFreeUser: [] as Record<string, never>[],
-        getCurrentPlatform: [] as Record<string, never>[],
-        registerCommand: [] as { command: string; handler: (params: Record<string, unknown>) => unknown }[]
+    public __calls!: {
+        enableDragToDocument: { element: HTMLElement; dragCallbacks: DragCallbacks; dragOptions?: DragOptions | undefined }[];
+        registerIframe: { element: HTMLIFrameElement }[];
+        showModalDialog: { dialogOptions: AlertDialogOptions | InputDialogOptions | CustomDialogOptions }[];
+        showColorPicker: { anchorElement: HTMLElement; options?: ColorPickerOptions | undefined }[];
+        hideColorPicker: Record<string, never>[];
+        startPremiumUpgradeIfFreeUser: Record<string, never>[];
+        getCurrentPlatform: Record<string, never>[];
+        registerCommand: { command: string; handler: (params: Record<string, unknown>) => unknown }[];
     };
 
     /** Configurable return values for mock methods. Override in tests as needed. */
-    public __returns = {
-        dialogResult: { type: "alert", buttonType: "cancel" } as DialogResult,
-        premiumUpgradeResult: true,
-        currentPlatform: {
-            inAppPurchaseAllowed: false,
-            platform: "chromeBrowser",
-            environment: "web",
-            deviceClass: "desktop"
-        } as CurrentPlatformPayload
+    public __returns!: {
+        dialogResult: DialogResult;
+        premiumUpgradeResult: boolean;
+        currentPlatform: CurrentPlatformPayload;
     };
 
     constructor() {
@@ -99,9 +94,7 @@ export class MockApplication extends TypedEventEmitter<AppEventsTypeMap> impleme
         this.document = new MockDocument();
         this.oauth = new MockOAuth();
         this.currentUser = new MockCurrentUser();
-        this.devFlags = {
-            simulateFreeUser: false
-        };
+        this._initMockState();
         this.command = {
             register: (command: string, handler: (params: Record<string, unknown>) => unknown): void => {
                 this.__calls.registerCommand.push({ command, handler });
@@ -210,6 +203,10 @@ export class MockApplication extends TypedEventEmitter<AppEventsTypeMap> impleme
         this.document.__reset();
         this.oauth.__reset();
         this.currentUser.__reset();
+        this._initMockState();
+    }
+
+    private _initMockState(): void {
         this.devFlags = {
             simulateFreeUser: false
         };

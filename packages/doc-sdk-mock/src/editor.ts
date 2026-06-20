@@ -41,11 +41,11 @@ export class MockExpressEditor {
 
     private _isEditAllowed: boolean = false;
 
-    get _isEditAllowedState(): boolean {
+    get isEditAllowed(): boolean {
         return this._isEditAllowed;
     }
 
-    set _isEditAllowedState(val: boolean) {
+    set isEditAllowed(val: boolean) {
         this._isEditAllowed = val;
     }
 
