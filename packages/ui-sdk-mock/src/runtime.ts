@@ -130,7 +130,7 @@ export class MockRuntime implements Runtime {
         }
 
         if (runtimeType === ("documentSandbox" as RuntimeType)) {
-            return createComlinkProxy(() => this._exposedApi || {}) as unknown as T;
+            throw new Error("Bridge not initialized: cannot proxy to documentSandbox");
         }
 
         throw new UnknownRuntimeError(runtimeType);

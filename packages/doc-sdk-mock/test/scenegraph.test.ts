@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { editor, __resetMockState, NodeAlreadyParentedError } from "../src/index.js";
+import { editor, __resetMockState } from "../src/index.js";
 
 describe("Scenegraph", () => {
     beforeEach(() => {
@@ -12,7 +12,7 @@ describe("Scenegraph", () => {
         expect(editor.documentRoot.pages.first?.artboards.length).toBe(1);
     });
 
-    it("should reject double parenting and throw NodeAlreadyParentedError", () => {
+    it("should handle double parenting by removing from old parent first", () => {
         const rect = editor.createRectangle();
         const artboard = editor.context.insertionParent;
         
@@ -22,9 +22,11 @@ describe("Scenegraph", () => {
 
         const newArtboard = editor.documentRoot.pages.first!.artboards.addArtboard();
         
-        // Enforce parent check
-        expect(() => {
-            newArtboard.children.append(rect);
-        }).toThrow(NodeAlreadyParentedError);
+        // Append to new parent
+        newArtboard.children.append(rect);
+        
+        expect(rect.parent).toBe(newArtboard);
+        expect(newArtboard.children.first).toBe(rect);
+        expect(artboard.children.length).toBe(0);
     });
 });

@@ -1,6 +1,6 @@
 import { MockRestrictedItemList } from "./RestrictedItemList.js";
 import { MockBaseNode } from "./BaseNode.js";
-import { NodeAlreadyParentedError } from "../errors.js";
+
 
 /**
  * A mutable, ordered list of child nodes that enforces the single-parent invariant.
@@ -14,11 +14,7 @@ export class MockItemList<T extends MockBaseNode> extends MockRestrictedItemList
         this.owner = owner;
     }
 
-    private _checkParent(item: T): void {
-        if (item.parent !== undefined && item.parent !== this.owner) {
-            throw new NodeAlreadyParentedError();
-        }
-    }
+
 
     /**
      * Appends one or more nodes to the end of this list.
@@ -27,9 +23,7 @@ export class MockItemList<T extends MockBaseNode> extends MockRestrictedItemList
      * @param items - The nodes to append.
      */
     append(...items: T[]): void {
-        for (const item of items) {
-            this._checkParent(item);
-        }
+
         for (const item of items) {
             item.removeFromParent();
             item.parent = this.owner;
@@ -56,7 +50,7 @@ export class MockItemList<T extends MockBaseNode> extends MockRestrictedItemList
      */
     replace(oldItem: T, newItem: T): void {
         if (oldItem === newItem) return;
-        this._checkParent(newItem);
+
         const index = this.items.indexOf(oldItem);
         if (index === -1) {
             throw new Error("Old item not found in ItemList.");
@@ -77,7 +71,7 @@ export class MockItemList<T extends MockBaseNode> extends MockRestrictedItemList
      */
     insertBefore(newItem: T, before: T): void {
         if (newItem === before) return;
-        this._checkParent(newItem);
+
         if (this.items.indexOf(before) === -1) {
             throw new Error("Before item not found in ItemList.");
         }
@@ -96,7 +90,7 @@ export class MockItemList<T extends MockBaseNode> extends MockRestrictedItemList
      */
     insertAfter(newItem: T, after: T): void {
         if (newItem === after) return;
-        this._checkParent(newItem);
+
         if (this.items.indexOf(after) === -1) {
             throw new Error("After item not found in ItemList.");
         }
