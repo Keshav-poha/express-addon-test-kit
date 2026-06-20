@@ -34,4 +34,10 @@ export class MockEllipseNode extends MockFillableNode {
         this._ry = val;
         this._height = val * 2;
     }
+
+    protected override _copySubclassProperties(clone: any): void {
+        super._copySubclassProperties(clone);
+        clone._rx = this._rx;
+        clone._ry = this._ry;
+    }
 }

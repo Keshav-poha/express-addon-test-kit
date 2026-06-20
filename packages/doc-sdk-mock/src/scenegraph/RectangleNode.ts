@@ -32,4 +32,12 @@ export class MockRectangleNode extends MockFillableNode {
         }
         this._height = val;
     }
+
+    protected override _copySubclassProperties(clone: any): void {
+        super._copySubclassProperties(clone);
+        clone.topLeftCornerRadius = this.topLeftCornerRadius;
+        clone.topRightCornerRadius = this.topRightCornerRadius;
+        clone.bottomLeftCornerRadius = this.bottomLeftCornerRadius;
+        clone.bottomRightCornerRadius = this.bottomRightCornerRadius;
+    }
 }

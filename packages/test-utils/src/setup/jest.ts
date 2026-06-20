@@ -1,4 +1,4 @@
-declare const afterEach: any;
+declare const afterEach: (fn: () => void | Promise<void>) => void;
 import { __resetMockState as resetDoc } from "@express-addon-tests/doc-sdk-mock";
 
 /**

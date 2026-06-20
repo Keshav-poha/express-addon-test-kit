@@ -36,4 +36,11 @@ export class MockFillableNode extends MockStrokableNode {
             this._fill = undefined;
         }
     }
+
+    protected override _copySubclassProperties(clone: any): void {
+        super._copySubclassProperties(clone);
+        if (this._fill) {
+            clone._fill = { ...this._fill, color: { ...this._fill.color } };
+        }
+    }
 }

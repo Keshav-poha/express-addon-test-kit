@@ -44,4 +44,15 @@ export class MockStrokableNode extends MockNode {
             this._stroke = undefined;
         }
     }
+
+    protected override _copySubclassProperties(clone: any): void {
+        super._copySubclassProperties(clone);
+        if (this._stroke) {
+            clone._stroke = { 
+                ...this._stroke, 
+                color: { ...this._stroke.color }, 
+                dashPattern: [...this._stroke.dashPattern] 
+            };
+        }
+    }
 }

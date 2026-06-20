@@ -89,6 +89,10 @@ export class MockColorUtils {
         return `#${rHex}${gHex}${bHex}${aHex}`;
     }
 
+    __resetMockState(): void {
+        // stateless singleton, no-op reset
+    }
+
     private _validate(r: number, g: number, b: number, a: number): void {
         if (r < 0 || r > 1 || g < 0 || g > 1 || b < 0 || b > 1 || a < 0 || a > 1) {
             throw new RangeError("Color channels must be in the range [0, 1].");

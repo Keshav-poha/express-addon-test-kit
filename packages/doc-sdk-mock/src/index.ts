@@ -49,6 +49,7 @@ export { MockPageNode as PageNode } from "./scenegraph/PageNode.js";
 export { MockExpressRootNode as ExpressRootNode } from "./scenegraph/ExpressRootNode.js";
 export { MockExpressEditor } from "./editor.js";
 export { MockExpressContext } from "./context.js";
+export { NodeAlreadyParentedError } from "./errors.js";
 
 /**
  * Resets all doc-sdk-mock singletons to their initial state.
@@ -56,6 +57,7 @@ export { MockExpressContext } from "./context.js";
  */
 export function __resetMockState(): void {
     editor.__resetMockState();
+    colorUtils.__resetMockState();
     fonts.__reset();
     viewport.__calls.bringIntoView = [];
 }

@@ -3,7 +3,6 @@ import { MockUI } from "./ui.js";
 import { MockDocument } from "./document.js";
 import { MockOAuth } from "./oauth.js";
 import { MockCurrentUser } from "./currentUser.js";
-import { AppEvent } from "./types.js";
 import type {
     Application,
     DragCallbacks,
@@ -43,19 +42,19 @@ export interface DocumentPublishedLinkAvailableEventData {
  * Provides Type mappings between Events and their corresponding data delivered to the handler.
  */
 export interface AppEventsTypeMap {
-    [AppEvent.themechange]: AppThemeChangeEventData;
-    [AppEvent.localechange]: AppLocaleChangeEventData;
-    [AppEvent.formatchange]: AppFormatChangeEventData;
-    [AppEvent.reset]: undefined;
-    [AppEvent.dragstart]: AppDragStartEventData;
-    [AppEvent.dragend]: AppDragEndEventData;
-    [AppEvent.dragcancel]: undefined;
+    themechange: AppThemeChangeEventData;
+    localechange: AppLocaleChangeEventData;
+    formatchange: AppFormatChangeEventData;
+    reset: undefined;
+    dragstart: AppDragStartEventData;
+    dragend: AppDragEndEventData;
+    dragcancel: undefined;
 
-    [AppEvent.documentIdAvailable]: DocumentIdAvailableEventData;
-    [AppEvent.documentLinkAvailable]: DocumentLinkAvailableEventData;
-    [AppEvent.documentPublishedLinkAvailable]: DocumentPublishedLinkAvailableEventData;
-    [AppEvent.documentTitleChange]: DocumentTitleChangeEventData;
-    [AppEvent.documentExportAllowedChange]: DocumentExportAllowedChangeEventData;
+    documentIdAvailable: DocumentIdAvailableEventData;
+    documentLinkAvailable: DocumentLinkAvailableEventData;
+    documentPublishedLinkAvailable: DocumentPublishedLinkAvailableEventData;
+    documentTitleChange: DocumentTitleChangeEventData;
+    documentExportAllowedChange: DocumentExportAllowedChangeEventData;
 }
 
 /**

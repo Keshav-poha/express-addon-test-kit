@@ -142,8 +142,11 @@ export class MockNode extends MockVisualNode {
      *
      * @returns The cloned node.
      */
-    cloneInPlace(): MockNode {
-        const clone = new MockNode(this.type);
+    cloneInPlace(): this {
+        const ctor = this.constructor as { new (type?: string): MockNode };
+        const clone = (ctor.length > 0 && ctor.name !== "MockStandaloneTextNode" && ctor.name !== "MockPathNode")
+            ? new ctor(this.type)
+            : new ctor();
         clone._width = this._width;
         clone._height = this._height;
         clone.translation = { ...this._translation };
@@ -152,13 +155,19 @@ export class MockNode extends MockVisualNode {
         clone.locked = this._locked;
         clone.blendMode = this._blendMode;
 
+        this._copySubclassProperties(clone);
+
         if (this.parent) {
             const parentWithChildren = this.parent as MockNode & { children?: { insertBefore: (n: MockNode, before: MockNode) => void } };
             if (parentWithChildren.children && typeof parentWithChildren.children.insertBefore === "function") {
                 parentWithChildren.children.insertBefore(clone, this);
             }
         }
-        return clone;
+        return clone as this;
+    }
+
+    protected _copySubclassProperties(clone: any): void {
+        // Overridden by subclasses
     }
 
     /**

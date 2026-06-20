@@ -19,7 +19,7 @@ async function flushMicrotasks(): Promise<void> {
  * @param locale The new locale string (e.g., 'fr-FR', 'de-DE').
  */
 export async function simulateLocaleChange(sdk: AddOnSDKAPI, locale: string): Promise<void> {
-    const app = sdk.app as any;
+    const app = sdk.app as unknown as MockApplication;
     app.ui.__setLocale(locale);
     app.emit("localechange", { locale });
     await flushMicrotasks();
@@ -34,7 +34,7 @@ export async function simulateLocaleChange(sdk: AddOnSDKAPI, locale: string): Pr
  * @param theme The new UI theme ('light', 'dark', etc.).
  */
 export async function simulateThemeChange(sdk: AddOnSDKAPI, theme: "light" | "dark"): Promise<void> {
-    const app = sdk.app as any;
+    const app = sdk.app as unknown as MockApplication;
     app.ui.__setTheme(theme);
     app.emit("themechange", { theme });
     await flushMicrotasks();
@@ -49,7 +49,7 @@ export async function simulateThemeChange(sdk: AddOnSDKAPI, theme: "light" | "da
  * @param format The new regional format string (e.g., 'en-US', 'fr-FR').
  */
 export async function simulateFormatChange(sdk: AddOnSDKAPI, format: string): Promise<void> {
-    const app = sdk.app as any;
+    const app = sdk.app as unknown as MockApplication;
     app.ui.__setFormat(format);
     app.emit("formatchange", { format });
     await flushMicrotasks();
@@ -78,7 +78,7 @@ export async function simulateSelectionChange(
  * @param id The document ID.
  */
 export async function simulateDocumentIdAvailable(sdk: AddOnSDKAPI, id: string): Promise<void> {
-    const app = sdk.app as any;
+    const app = sdk.app as unknown as MockApplication;
     app.document.__returns.id = id;
     app.emit("documentIdAvailable", { id });
     await flushMicrotasks();
@@ -92,7 +92,7 @@ export async function simulateDocumentIdAvailable(sdk: AddOnSDKAPI, id: string):
  * @param link The document link.
  */
 export async function simulateDocumentLinkAvailable(sdk: AddOnSDKAPI, link: string): Promise<void> {
-    const app = sdk.app as any;
+    const app = sdk.app as unknown as MockApplication;
     app.document.__returns.link = link;
     app.emit("documentLinkAvailable", { link });
     await flushMicrotasks();
@@ -106,7 +106,7 @@ export async function simulateDocumentLinkAvailable(sdk: AddOnSDKAPI, link: stri
  * @param link The published link.
  */
 export async function simulateDocumentPublishedLinkAvailable(sdk: AddOnSDKAPI, link: string): Promise<void> {
-    const app = sdk.app as any;
+    const app = sdk.app as unknown as MockApplication;
     app.document.__returns.link = link;
     app.emit("documentPublishedLinkAvailable", { documentPublishedLink: link });
     await flushMicrotasks();
@@ -120,7 +120,7 @@ export async function simulateDocumentPublishedLinkAvailable(sdk: AddOnSDKAPI, l
  * @param title The new document title.
  */
 export async function simulateDocumentTitleChange(sdk: AddOnSDKAPI, title: string): Promise<void> {
-    const app = sdk.app as any;
+    const app = sdk.app as unknown as MockApplication;
     app.document.__returns.title = title;
     app.emit("documentTitleChange", { title });
     await flushMicrotasks();
@@ -134,7 +134,7 @@ export async function simulateDocumentTitleChange(sdk: AddOnSDKAPI, title: strin
  * @param exportAllowed Whether export is allowed.
  */
 export async function simulateDocumentExportAllowedChange(sdk: AddOnSDKAPI, exportAllowed: boolean): Promise<void> {
-    const app = sdk.app as any;
+    const app = sdk.app as unknown as MockApplication;
     app.document.__returns.exportAllowed = exportAllowed;
     app.emit("documentExportAllowedChange", { exportAllowed });
     await flushMicrotasks();
@@ -148,7 +148,7 @@ export async function simulateDocumentExportAllowedChange(sdk: AddOnSDKAPI, expo
  * @param element The HTML element being dragged.
  */
 export async function simulateDragStart(sdk: AddOnSDKAPI, element: HTMLElement): Promise<void> {
-    const app = sdk.app as any;
+    const app = sdk.app as unknown as MockApplication;
     app.emit("dragstart", { element });
     await flushMicrotasks();
 }
@@ -168,7 +168,7 @@ export async function simulateDragEnd(
     element: HTMLElement,
     dropCancelReason?: string
 ): Promise<void> {
-    const app = sdk.app as any;
+    const app = sdk.app as unknown as MockApplication;
     app.emit("dragend", { dropCancelled, element, dropCancelReason });
     await flushMicrotasks();
 }
@@ -180,7 +180,7 @@ export async function simulateDragEnd(
  * @param sdk The Mock AddOnUISdk instance.
  */
 export async function simulateDragCancel(sdk: AddOnSDKAPI): Promise<void> {
-    const app = sdk.app as any;
+    const app = sdk.app as unknown as MockApplication;
     app.emit("dragcancel", undefined);
     await flushMicrotasks();
 }
@@ -198,7 +198,7 @@ export function setupOAuthMockSuccess(
     code: string = "mock-code",
     redirectUri: string = "https://mock.redirect/"
 ): void {
-    const app = sdk.app as any;
+    const app = sdk.app as unknown as MockApplication;
     app.oauth.__setNextResponse({
         id: "mock-auth-id",
         code,
@@ -226,6 +226,6 @@ export function setupOAuthMockFailure(
     status: string,
     description: string
 ): void {
-    const app = sdk.app as any;
+    const app = sdk.app as unknown as MockApplication;
     app.oauth.__setNextFailure(status, description);
 }

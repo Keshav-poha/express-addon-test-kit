@@ -17,11 +17,25 @@ export class MockGroupNode extends MockNode {
         this.children = new MockItemList<MockNode>(this);
     }
 
+    protected override _copySubclassProperties(clone: MockGroupNode): void {
+        super._copySubclassProperties(clone);
+        if (this.maskShape) {
+            // Temporarily clear parent to avoid automatic insertion in current parent
+            const maskClone = this.maskShape.cloneInPlace() as MockNode;
+            clone.maskShape = maskClone;
+        }
+        const clonedChildren = this.children.toArray().map(child => child.cloneInPlace() as MockNode);
+        clone.children.append(...clonedChildren);
+    }
+
     /**
      * Returns all descendants of this group via breadth-first traversal.
      */
     override get allChildren(): Iterable<MockNode> {
         const result: MockNode[] = [];
+        if (this.maskShape) {
+            result.push(this.maskShape);
+        }
         const queue: MockNode[] = [...this.children.toArray()];
         while (queue.length > 0) {
             const node = queue.shift()!;

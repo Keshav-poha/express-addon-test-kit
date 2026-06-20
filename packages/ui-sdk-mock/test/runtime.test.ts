@@ -16,8 +16,8 @@ describe("MockRuntime and ClientStorage", () => {
         const testApi = { sayHello: () => "world" };
         runtime.exposeApi(testApi);
 
-        const proxy = await runtime.apiProxy("documentSandbox" as any);
-        expect(proxy).toBe(testApi);
+        const proxy = await runtime.apiProxy<{ sayHello: () => Promise<string> }>("documentSandbox" as any);
+        expect(await proxy.sayHello()).toBe("world");
     });
 
     it("should perform ClientStorage operations correctly", async () => {

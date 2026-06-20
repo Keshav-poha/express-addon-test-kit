@@ -1,2 +1,2 @@
-export * from "./types/express-document-sdk";
-export * from "./types/add-on-sdk-document-sandbox";
+export type * from "./types/express-document-sdk";
+export type * from "./types/add-on-sdk-document-sandbox";

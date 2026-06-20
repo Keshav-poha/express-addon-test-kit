@@ -1,5 +1,6 @@
 import { MockRestrictedItemList } from "./RestrictedItemList.js";
 import { MockBaseNode } from "./BaseNode.js";
+import { NodeAlreadyParentedError } from "../errors.js";
 
 /**
  * A mutable, ordered list of child nodes that enforces the single-parent invariant.
@@ -13,6 +14,12 @@ export class MockItemList<T extends MockBaseNode> extends MockRestrictedItemList
         this.owner = owner;
     }
 
+    private _checkParent(item: T): void {
+        if (item.parent !== undefined && item.parent !== this.owner) {
+            throw new NodeAlreadyParentedError();
+        }
+    }
+
     /**
      * Appends one or more nodes to the end of this list.
      * Each node is removed from its previous parent before being added here.
@@ -20,6 +27,9 @@ export class MockItemList<T extends MockBaseNode> extends MockRestrictedItemList
      * @param items - The nodes to append.
      */
     append(...items: T[]): void {
+        for (const item of items) {
+            this._checkParent(item);
+        }
         for (const item of items) {
             item.removeFromParent();
             item.parent = this.owner;
@@ -45,14 +55,17 @@ export class MockItemList<T extends MockBaseNode> extends MockRestrictedItemList
      * @throws If `oldItem` is not found in this list.
      */
     replace(oldItem: T, newItem: T): void {
+        if (oldItem === newItem) return;
+        this._checkParent(newItem);
         const index = this.items.indexOf(oldItem);
         if (index === -1) {
             throw new Error("Old item not found in ItemList.");
         }
-        oldItem.parent = undefined;
         newItem.removeFromParent();
+        const targetIndex = this.items.indexOf(oldItem);
+        oldItem.parent = undefined;
         newItem.parent = this.owner;
-        this.items[index] = newItem;
+        this.items[targetIndex] = newItem;
     }
 
     /**
@@ -63,11 +76,13 @@ export class MockItemList<T extends MockBaseNode> extends MockRestrictedItemList
      * @throws If `before` is not found in this list.
      */
     insertBefore(newItem: T, before: T): void {
-        const index = this.items.indexOf(before);
-        if (index === -1) {
+        if (newItem === before) return;
+        this._checkParent(newItem);
+        if (this.items.indexOf(before) === -1) {
             throw new Error("Before item not found in ItemList.");
         }
         newItem.removeFromParent();
+        const index = this.items.indexOf(before);
         newItem.parent = this.owner;
         this.items.splice(index, 0, newItem);
     }
@@ -80,11 +95,13 @@ export class MockItemList<T extends MockBaseNode> extends MockRestrictedItemList
      * @throws If `after` is not found in this list.
      */
     insertAfter(newItem: T, after: T): void {
-        const index = this.items.indexOf(after);
-        if (index === -1) {
+        if (newItem === after) return;
+        this._checkParent(newItem);
+        if (this.items.indexOf(after) === -1) {
             throw new Error("After item not found in ItemList.");
         }
         newItem.removeFromParent();
+        const index = this.items.indexOf(after);
         newItem.parent = this.owner;
         this.items.splice(index + 1, 0, newItem);
     }

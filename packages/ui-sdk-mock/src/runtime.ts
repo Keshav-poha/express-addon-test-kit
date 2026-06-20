@@ -1,4 +1,5 @@
 import type { Runtime, RuntimeType, Dialog } from "./types.js";
+import { UnknownRuntimeError } from "./errors.js";
 
 /**
  * Type alias for an exposed API object.
@@ -11,6 +12,25 @@ export type ExposedApi = Record<string, unknown>;
 export interface RuntimeBridge {
     exposeApi?: (apiObj: ExposedApi) => void;
     apiProxy?: <T>(runtimeType: RuntimeType) => Promise<T>;
+}
+
+function createComlinkProxy(target: Record<string, unknown>): unknown {
+    return new Proxy({}, {
+        get(t, prop: string) {
+            if (prop === "then") return undefined;
+            const val = target[prop];
+            if (typeof val === "function") {
+                return (...args: unknown[]) => {
+                    try {
+                        return Promise.resolve(val.apply(target, args));
+                    } catch (err) {
+                        return Promise.reject(err);
+                    }
+                };
+            }
+            return Promise.resolve(val);
+        }
+    });
 }
 
 /**
@@ -53,10 +73,10 @@ export class MockRuntime implements Runtime {
         }
 
         if (runtimeType === ("documentSandbox" as RuntimeType)) {
-            return (this._exposedApi || {}) as unknown as T;
+            return createComlinkProxy(this._exposedApi || {}) as unknown as T;
         }
 
-        throw new Error(`Unknown runtime type: ${runtimeType}`);
+        throw new UnknownRuntimeError(runtimeType);
     }
 
     /**

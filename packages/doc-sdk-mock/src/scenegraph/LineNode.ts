@@ -21,4 +21,14 @@ export class MockLineNode extends MockStrokableNode {
         this._width = Math.abs(endX - startX);
         this._height = Math.abs(endY - startY);
     }
+
+    protected override _copySubclassProperties(clone: any): void {
+        super._copySubclassProperties(clone);
+        clone.startX = this.startX;
+        clone.startY = this.startY;
+        clone.endX = this.endX;
+        clone.endY = this.endY;
+        clone.startArrowHeadType = this.startArrowHeadType;
+        clone.endArrowHeadType = this.endArrowHeadType;
+    }
 }

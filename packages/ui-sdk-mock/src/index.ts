@@ -205,6 +205,8 @@ export interface MockAddOnUISdkOptions {
  * Interface defining the test-specific controls available on the mock SDK.
  */
 export interface MockSDKControls {
+    /** The raw, unproxied application mock instance. Useful for synchronous setup in tests before ready resolves. */
+    app: MockApplication;
     /** Sets the delay before sdk.ready resolves, applicable only before ready is awaited. */
     delayReady(ms: number): void;
     /** Sets a simulated async delay for document operations. */
@@ -270,6 +272,9 @@ export function createMockAddOnUISdk(options?: MockAddOnUISdkOptions): AddOnSDKA
         },
         constants: Constants,
         __controls: {
+            get app() {
+                return appInstance;
+            },
             delayReady(ms: number) {
                 readyDelayMs = ms;
             },

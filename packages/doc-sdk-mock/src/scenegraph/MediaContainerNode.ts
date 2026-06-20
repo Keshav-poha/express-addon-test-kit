@@ -14,13 +14,30 @@ export class MockMediaContainerNode extends MockNode {
     public maskShape: MockNode | undefined = undefined;
     private _bitmapImage: MockBitmapImage;
 
-    constructor(bitmapImage: MockBitmapImage) {
+    constructor(bitmapImage?: MockBitmapImage) {
         super(SceneNodeType.mediaContainer);
-        this._bitmapImage = bitmapImage;
+        const img = bitmapImage ?? new MockBitmapImage(new Blob());
+        this._bitmapImage = img;
         this.mediaRectangle = new MockRectangleNode();
-        this.mediaRectangle.width = bitmapImage.width;
-        this.mediaRectangle.height = bitmapImage.height;
+        this.mediaRectangle.width = img.width;
+        this.mediaRectangle.height = img.height;
         this.mediaRectangle.parent = this;
+    }
+
+    protected override _copySubclassProperties(clone: MockMediaContainerNode): void {
+        super._copySubclassProperties(clone);
+        clone._bitmapImage = this._bitmapImage;
+        const rectClone = this.mediaRectangle.cloneInPlace();
+        rectClone.removeFromParent();
+        clone.mediaRectangle = rectClone;
+        rectClone.parent = clone;
+
+        if (this.maskShape) {
+            const maskClone = this.maskShape.cloneInPlace() as MockNode;
+            maskClone.removeFromParent();
+            clone.maskShape = maskClone;
+            maskClone.parent = clone;
+        }
     }
 
     /**

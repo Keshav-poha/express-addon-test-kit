@@ -32,4 +32,9 @@ export class MockStandaloneTextNode extends MockNode {
     set text(val: string) {
         this.fullContent.text = val;
     }
+
+    protected override _copySubclassProperties(clone: any): void {
+        super._copySubclassProperties(clone);
+        clone.fullContent.text = this.fullContent.text;
+    }
 }

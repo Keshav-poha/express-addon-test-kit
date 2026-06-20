@@ -1,4 +1,4 @@
-import { createMockAddOnUISdk, MockCurrentUser, AddOnSDKAPI } from "@express-addon-tests/ui-sdk-mock";
+import { createMockAddOnUISdk, MockCurrentUser, AddOnSDKAPI, MockSDKControls, MockApplication } from "@express-addon-tests/ui-sdk-mock";
 import {
     editor,
     EllipseNode,
@@ -51,23 +51,21 @@ export interface LineOptions {
 }
 
 export function createDocument(options?: { pagesCount?: number; locale?: string; theme?: string }): {
-    sdk: AddOnSDKAPI & { __controls: any };
+    sdk: AddOnSDKAPI & { __controls: MockSDKControls };
     editor: MockExpressEditor;
     root: ExpressRootNode;
 } {
     const sdk = createMockAddOnUISdk({
         entrypointType: "panel"
-    }) as AddOnSDKAPI & { __controls: any };
+    });
     
     // Set locale and theme synchronously to avoid race conditions in tests.
     // In a real addon, these are available when ready resolves.
     if (options?.locale) {
-        // We cast app to any to access internal __setLocale which is available on the proxy target MockApplication
-        // Note: app is MockApplication but typed as Application by the proxy
-        (sdk.app as any).ui.__setLocale(options.locale);
+        sdk.__controls.app.ui.__setLocale(options.locale);
     }
     if (options?.theme) {
-        (sdk.app as any).ui.__setTheme(options.theme as any);
+        sdk.__controls.app.ui.__setTheme(options.theme as "light" | "dark");
     }
 
     const root = editor.documentRoot;

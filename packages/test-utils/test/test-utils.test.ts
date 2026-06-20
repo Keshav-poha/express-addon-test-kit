@@ -197,7 +197,7 @@ describe("Test Utils Simulation Helpers", () => {
         expect(linkHandler).toHaveBeenCalledWith({ link: "https://doc.link" });
 
         await simulateDocumentPublishedLinkAvailable(sdk, "https://pub.link");
-        expect(pubLinkHandler).toHaveBeenCalledWith({ link: "https://pub.link" });
+        expect(pubLinkHandler).toHaveBeenCalledWith({ documentPublishedLink: "https://pub.link" });
 
         await simulateDocumentTitleChange(sdk, "New Title");
         expect(await sdk.app.document.title()).toBe("New Title");
