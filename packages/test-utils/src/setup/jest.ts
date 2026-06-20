@@ -1,5 +1,6 @@
 declare const afterEach: (fn: () => void | Promise<void>) => void;
 import { __resetMockState as resetDoc } from "@express-addon-tests/doc-sdk-mock";
+import addOnUISdk from "@express-addon-tests/ui-sdk-mock";
 
 /**
  * Returns the `moduleNameMapper` configuration required for Jest to redirect
@@ -23,5 +24,8 @@ export function getJestModuleNameMapper(): Record<string, string> {
 export function setupJest(): void {
     afterEach(() => {
         resetDoc();
+        if (addOnUISdk && typeof (addOnUISdk as any).__controls?.resetAll === "function") {
+            (addOnUISdk as any).__controls.resetAll();
+        }
     });
 }

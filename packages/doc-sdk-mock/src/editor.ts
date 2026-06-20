@@ -39,13 +39,27 @@ export class MockExpressEditor {
     /** The current editor context, including selection and insertion point. */
     public context!: MockExpressContext;
 
+    private _isEditAllowed: boolean = false;
+
+    get _isEditAllowedState(): boolean {
+        return this._isEditAllowed;
+    }
+
+    set _isEditAllowedState(val: boolean) {
+        this._isEditAllowed = val;
+    }
+
     /** Test-only controls for this editor instance. */
     public readonly __controls = {
         /**
          * When `true`, `queueAsyncEdit` executes its lambda synchronously.
          * Useful in tests that do not need to await microtasks.
          */
-        syncQueueAsyncEdit: false
+        syncQueueAsyncEdit: false,
+        /**
+         * When `true`, mutations are only allowed inside queueAsyncEdit.
+         */
+        strictEditMode: false
     };
 
     constructor() {
@@ -189,14 +203,24 @@ export class MockExpressEditor {
      * @returns A promise that resolves after the lambda has run.
      */
     async queueAsyncEdit(lambda: () => void): Promise<void> {
+        const runWithLock = () => {
+            const wasAllowed = this._isEditAllowed;
+            this._isEditAllowed = true;
+            try {
+                lambda();
+            } finally {
+                this._isEditAllowed = wasAllowed;
+            }
+        };
+
         if (this.__controls.syncQueueAsyncEdit) {
-            lambda();
+            runWithLock();
             return Promise.resolve();
         }
         return new Promise<void>((resolve, reject) => {
             queueMicrotask(() => {
                 try {
-                    lambda();
+                    runWithLock();
                     resolve();
                 } catch (err) {
                     reject(err);

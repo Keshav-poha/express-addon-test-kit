@@ -5,8 +5,13 @@ export class MockAddOnData {
         if (this.data.size >= 20 && !this.data.has(key)) {
             throw new Error("AddOnData key quota exceeded (max 20 keys).");
         }
-        const totalSize = Array.from(this.data.entries()).reduce((sum, [k, v]) => sum + k.length + v.length, 0);
-        if (totalSize + key.length + value.length > 3072) {
+        let currentTotalSize = 0;
+        for (const [k, v] of this.data.entries()) {
+            if (k !== key) {
+                currentTotalSize += k.length + v.length;
+            }
+        }
+        if (currentTotalSize + key.length + value.length > 3072) {
             throw new Error("AddOnData size quota exceeded (max 3KB).");
         }
         this.data.set(key, value);

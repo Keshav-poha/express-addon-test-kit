@@ -130,4 +130,33 @@ export class MockDocument implements Document {
     runPrintQualityCheck(options: PrintQualityCheckOptions): void {
         this.__calls.runPrintQualityCheck.push({ options });
     }
+
+    __reset(): void {
+        this._delayMs = 0;
+        this.__calls = {
+            addImage: [],
+            addAnimatedImage: [],
+            addVideo: [],
+            addAudio: [],
+            createRenditions: [],
+            getPagesMetadata: [],
+            getSelectedPageIds: [],
+            id: [],
+            title: [],
+            link: [],
+            exportAllowed: [],
+            importPdf: [],
+            importPresentation: [],
+            runPrintQualityCheck: []
+        };
+        this.__returns = {
+            renditions: [],
+            pagesMetadata: [],
+            selectedPageIds: [],
+            id: 'mock-doc-id',
+            title: 'Mock Document',
+            link: 'https://mock.link',
+            exportAllowed: true
+        };
+    }
 }

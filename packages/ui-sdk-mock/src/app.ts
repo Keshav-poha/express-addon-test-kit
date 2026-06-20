@@ -77,7 +77,8 @@ export class MockApplication extends TypedEventEmitter<AppEventsTypeMap> impleme
         showColorPicker: [] as { anchorElement: HTMLElement; options?: ColorPickerOptions | undefined }[],
         hideColorPicker: [] as Record<string, never>[],
         startPremiumUpgradeIfFreeUser: [] as Record<string, never>[],
-        getCurrentPlatform: [] as Record<string, never>[]
+        getCurrentPlatform: [] as Record<string, never>[],
+        registerCommand: [] as { command: string; handler: (params: Record<string, unknown>) => unknown }[]
     };
 
     /** Configurable return values for mock methods. Override in tests as needed. */
@@ -102,8 +103,8 @@ export class MockApplication extends TypedEventEmitter<AppEventsTypeMap> impleme
             simulateFreeUser: false
         };
         this.command = {
-            register: (_command: string, _handler: (params: Record<string, unknown>) => unknown): void => {
-                // stub — command registration is a no-op in the mock
+            register: (command: string, handler: (params: Record<string, unknown>) => unknown): void => {
+                this.__calls.registerCommand.push({ command, handler });
             }
         };
     }
@@ -201,5 +202,36 @@ export class MockApplication extends TypedEventEmitter<AppEventsTypeMap> impleme
     /** Sets the platform info returned by `getCurrentPlatform`. */
     __setCurrentPlatform(platform: CurrentPlatformPayload): void {
         this.__returns.currentPlatform = platform;
+    }
+
+    __reset(): void {
+        this.removeAllListeners();
+        this.ui.__reset();
+        this.document.__reset();
+        this.oauth.__reset();
+        this.currentUser.__reset();
+        this.devFlags = {
+            simulateFreeUser: false
+        };
+        this.__calls = {
+            enableDragToDocument: [],
+            registerIframe: [],
+            showModalDialog: [],
+            showColorPicker: [],
+            hideColorPicker: [],
+            startPremiumUpgradeIfFreeUser: [],
+            getCurrentPlatform: [],
+            registerCommand: []
+        };
+        this.__returns = {
+            dialogResult: { type: "alert", buttonType: "cancel" } as DialogResult,
+            premiumUpgradeResult: true,
+            currentPlatform: {
+                inAppPurchaseAllowed: false,
+                platform: "chromeBrowser",
+                environment: "web",
+                deviceClass: "desktop"
+            } as CurrentPlatformPayload
+        };
     }
 }

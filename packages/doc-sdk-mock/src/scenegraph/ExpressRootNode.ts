@@ -58,6 +58,12 @@ export class MockExpressRootNode extends MockBaseNode {
         this.pages = new MockPageList(this);
     }
 
+    override __removeChild(child: MockBaseNode): void {
+        if (child instanceof MockPageNode) {
+            this.pages.remove(child);
+        }
+    }
+
     override get allChildren(): Iterable<MockBaseNode> {
         return this.pages.toArray();
     }

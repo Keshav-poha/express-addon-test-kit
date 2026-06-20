@@ -46,21 +46,20 @@ export class MockBaseNode {
     }
 
     /**
+     * Removes a child from this node's collections.
+     * Overridden by container subclasses.
+     */
+    __removeChild(child: MockBaseNode): void {
+        // No-op base implementation
+    }
+
+    /**
      * Removes this node from its parent's child list.
      * Safe to call even if the node has no parent.
      */
     removeFromParent(): void {
         if (this.parent) {
-            const p = this.parent;
-            if ("children" in p && typeof (p as { children: { remove: (n: MockBaseNode) => void } }).children?.remove === "function") {
-                (p as { children: { remove: (n: MockBaseNode) => void } }).children.remove(this);
-            } else if ("artboards" in p && typeof (p as { artboards: { remove: (n: MockBaseNode) => void } }).artboards?.remove === "function") {
-                (p as { artboards: { remove: (n: MockBaseNode) => void } }).artboards.remove(this);
-            } else if ("pages" in p && typeof (p as { pages: { remove: (n: MockBaseNode) => void } }).pages?.remove === "function") {
-                (p as { pages: { remove: (n: MockBaseNode) => void } }).pages.remove(this);
-            } else {
-                this.parent = undefined;
-            }
+            this.parent.__removeChild(this);
         }
     }
 }

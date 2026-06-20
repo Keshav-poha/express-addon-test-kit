@@ -2,6 +2,7 @@ import { MockNode } from "./Node.js";
 import { MockRectangleNode } from "./RectangleNode.js";
 import { MockBitmapImage } from "./BitmapImage.js";
 import { SceneNodeType } from "../constants.js";
+import { MockBaseNode } from "./BaseNode.js";
 
 /**
  * A node that wraps a bitmap image within a rectangular clipping frame.
@@ -28,15 +29,23 @@ export class MockMediaContainerNode extends MockNode {
         super._copySubclassProperties(clone);
         clone._bitmapImage = this._bitmapImage;
         const rectClone = this.mediaRectangle.cloneInPlace();
-        rectClone.removeFromParent();
         clone.mediaRectangle = rectClone;
         rectClone.parent = clone;
 
         if (this.maskShape) {
             const maskClone = this.maskShape.cloneInPlace() as MockNode;
-            maskClone.removeFromParent();
             clone.maskShape = maskClone;
             maskClone.parent = clone;
+        }
+    }
+
+    override __removeChild(child: MockBaseNode): void {
+        if (child === this.maskShape) {
+            this.maskShape = undefined;
+            child.parent = undefined;
+        } else if (child === this.mediaRectangle) {
+            (this as any).mediaRectangle = undefined;
+            child.parent = undefined;
         }
     }
 

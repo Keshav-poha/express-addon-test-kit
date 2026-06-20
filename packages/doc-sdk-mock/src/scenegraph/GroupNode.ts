@@ -1,6 +1,7 @@
 import { MockNode } from "./Node.js";
 import { MockItemList } from "./ItemList.js";
 import { SceneNodeType } from "../constants.js";
+import { MockBaseNode } from "./BaseNode.js";
 
 /**
  * A group node that contains an ordered list of child nodes.
@@ -28,24 +29,24 @@ export class MockGroupNode extends MockNode {
         clone.children.append(...clonedChildren);
     }
 
+    override __removeChild(child: MockBaseNode): void {
+        if (child === this.maskShape) {
+            this.maskShape = undefined;
+            child.parent = undefined;
+        } else if (child instanceof MockNode) {
+            this.children.remove(child);
+        }
+    }
+
     /**
-     * Returns all descendants of this group via breadth-first traversal.
+     * Returns the immediate children of this group.
      */
     override get allChildren(): Iterable<MockNode> {
         const result: MockNode[] = [];
         if (this.maskShape) {
             result.push(this.maskShape);
         }
-        const queue: MockNode[] = [...this.children.toArray()];
-        while (queue.length > 0) {
-            const node = queue.shift()!;
-            result.push(node);
-            for (const child of node.allChildren) {
-                if (child instanceof MockNode) {
-                    queue.push(child);
-                }
-            }
-        }
+        result.push(...this.children.toArray());
         return result;
     }
 

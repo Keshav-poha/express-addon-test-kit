@@ -223,27 +223,22 @@ export interface MockSDKControls {
  * @returns A mock implementation of AddOnSDKAPI along with test `__controls` to simulate system states.
  */
 export function createMockAddOnUISdk(options?: MockAddOnUISdkOptions): AddOnSDKAPI & { __controls: MockSDKControls } {
-    let isReady = false;
     let readyDelayMs = options?.readyDelayMs ?? 0;
+    let isReady = readyDelayMs === 0;
     let resolveReadyPromise: (() => void) | null = null;
     
-    let readyPromise = new Promise<void>((resolve) => {
-        resolveReadyPromise = resolve;
-    });
-
-    if (readyDelayMs > 0) {
+    let readyPromise: Promise<void>;
+    if (isReady) {
+        readyPromise = Promise.resolve();
+    } else {
+        readyPromise = new Promise<void>((resolve) => {
+            resolveReadyPromise = resolve;
+        });
         setTimeout(() => {
             isReady = true;
             resolveReadyPromise?.();
         }, readyDelayMs);
     }
-
-    queueMicrotask(() => {
-        if (!isReady && readyDelayMs === 0) {
-            isReady = true;
-            resolveReadyPromise?.();
-        }
-    });
 
     const appInstance = new MockApplication();
     const runtimeInstance = new MockRuntime();
@@ -282,49 +277,10 @@ export function createMockAddOnUISdk(options?: MockAddOnUISdkOptions): AddOnSDKA
                 appInstance.document.__setAsyncDelay(ms);
             },
             resetAll() {
-                isReady = false;
                 readyDelayMs = 0;
-                readyPromise = new Promise<void>((resolve) => {
-                    resolveReadyPromise = resolve;
-                });
-                queueMicrotask(() => {
-                    if (!isReady && readyDelayMs === 0) {
-                        isReady = true;
-                        resolveReadyPromise?.();
-                    }
-                });
-                appInstance.removeAllListeners();
-                appInstance.ui.__setLocale('en-US');
-                appInstance.ui.__setTheme('light');
-                appInstance.ui.__setFormat('en-US');
-                appInstance.ui.__setLocales(['en-US']);
-                appInstance.ui.__calls.openEditorPanel = [];
-                appInstance.__calls.enableDragToDocument = [];
-                appInstance.__calls.registerIframe = [];
-                appInstance.__calls.showModalDialog = [];
-                appInstance.__calls.showColorPicker = [];
-                appInstance.__calls.hideColorPicker = [];
-                appInstance.__calls.startPremiumUpgradeIfFreeUser = [];
-                appInstance.__calls.getCurrentPlatform = [];
-                appInstance.document.__calls.addImage = [];
-                appInstance.document.__calls.addAnimatedImage = [];
-                appInstance.document.__calls.addVideo = [];
-                appInstance.document.__calls.addAudio = [];
-                appInstance.document.__calls.createRenditions = [];
-                appInstance.document.__calls.getPagesMetadata = [];
-                appInstance.document.__calls.getSelectedPageIds = [];
-                appInstance.document.__calls.id = [];
-                appInstance.document.__calls.title = [];
-                appInstance.document.__calls.link = [];
-                appInstance.document.__calls.exportAllowed = [];
-                appInstance.document.__calls.importPdf = [];
-                appInstance.document.__calls.importPresentation = [];
-                appInstance.document.__calls.runPrintQualityCheck = [];
-                appInstance.document.__setAsyncDelay(0);
-                appInstance.oauth.__reset();
-                appInstance.currentUser.__setUserId('mock-user-id');
-                appInstance.currentUser.__setIsPremiumUser(false);
-                appInstance.currentUser.__setIsAnonymousUser(false);
+                isReady = true;
+                readyPromise = Promise.resolve();
+                appInstance.__reset();
                 clientStorageInstance.__reset();
             }
         }
@@ -332,3 +288,6 @@ export function createMockAddOnUISdk(options?: MockAddOnUISdkOptions): AddOnSDKA
 
     return sdk;
 }
+
+const addOnUISdk = createMockAddOnUISdk();
+export default addOnUISdk;

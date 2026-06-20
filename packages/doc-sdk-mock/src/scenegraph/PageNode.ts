@@ -63,6 +63,12 @@ export class MockPageNode extends MockBaseNode {
         this.artboards.addArtboard();
     }
 
+    override __removeChild(child: MockBaseNode): void {
+        if (child instanceof MockArtboardNode) {
+            this.artboards.remove(child);
+        }
+    }
+
     override get allChildren(): Iterable<MockArtboardNode> {
         return this.artboards.toArray();
     }

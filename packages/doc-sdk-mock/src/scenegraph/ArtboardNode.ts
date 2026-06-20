@@ -4,6 +4,7 @@ import { MockNode } from "./Node.js";
 import { MockFill } from "./FillableNode.js";
 import { MockPageNode } from "./PageNode.js";
 import { SceneNodeType } from "../constants.js";
+import { MockBaseNode } from "./BaseNode.js";
 
 /**
  * A single artboard within a page. Contains a flat list of child nodes.
@@ -23,22 +24,17 @@ export class MockArtboardNode extends MockVisualNode {
         };
     }
 
+    override __removeChild(child: MockBaseNode): void {
+        if (child instanceof MockNode) {
+            this.children.remove(child);
+        }
+    }
+
     /**
-     * Returns all descendants of this artboard via breadth-first traversal.
+     * Returns the immediate children of this artboard.
      */
     override get allChildren(): Iterable<MockNode> {
-        const result: MockNode[] = [];
-        const queue: MockNode[] = [...this.children.toArray()];
-        while (queue.length > 0) {
-            const node = queue.shift()!;
-            result.push(node);
-            for (const child of node.allChildren) {
-                if (child instanceof MockNode) {
-                    queue.push(child);
-                }
-            }
-        }
-        return result;
+        return this.children.toArray();
     }
 
     /**

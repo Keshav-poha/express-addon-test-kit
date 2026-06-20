@@ -31,4 +31,10 @@ export class MockCurrentUser implements CurrentUser {
     __setIsAnonymousUser(value: boolean): void {
         this._isAnonymousUser = value;
     }
+
+    __reset(): void {
+        this._userId = 'mock-user-id';
+        this._isPremiumUser = false;
+        this._isAnonymousUser = false;
+    }
 }

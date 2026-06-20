@@ -97,4 +97,29 @@ describe("TestBridge", () => {
         const proxy = await iframeRuntime.apiProxy("documentSandbox" as any);
         expect(await proxy.val).toBe("hello");
     });
+
+    it("should support recursive proxying over the test bridge", async () => {
+        const { iframeRuntime, sandboxRuntime } = createBridge();
+
+        const complexApi = {
+            nested: {
+                value: "nested-value",
+                method(param: string) {
+                    return `echo: ${param}`;
+                },
+                deeply: {
+                    selfValue() {
+                        return "deep";
+                    }
+                }
+            }
+        };
+
+        sandboxRuntime.exposeApi(complexApi as any);
+
+        const proxy: any = await iframeRuntime.apiProxy("documentSandbox" as any);
+        expect(await proxy.nested.value).toBe("nested-value");
+        expect(await proxy.nested.method("hello")).toBe("echo: hello");
+        expect(await proxy.nested.deeply.selfValue()).toBe("deep");
+    });
 });

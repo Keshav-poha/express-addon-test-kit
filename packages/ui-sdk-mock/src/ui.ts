@@ -48,4 +48,12 @@ export class MockUI implements UI {
     __setLocales(locales: string[]): void {
         this._locales = locales;
     }
+
+    __reset(): void {
+        this._locale = 'en-US';
+        this._theme = 'light';
+        this._format = 'en-US';
+        this._locales = ['en-US'];
+        this.__calls.openEditorPanel = [];
+    }
 }
