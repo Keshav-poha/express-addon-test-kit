@@ -12,6 +12,9 @@ import type {
     PrintQualityCheckOptions
 } from "./types.js";
 
+/**
+ * Mock implementation of the Document middleware.
+ */
 export class MockDocument implements Document {
     public __calls = {
         addImage: [] as { blob: Blob, attributes?: MediaAttributes | undefined, importAddOnData?: ImportAddOnData | undefined }[],

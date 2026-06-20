@@ -50,9 +50,7 @@ export enum SceneNodeType {
     mediaContainer = "mediaContainer",
     artboard = "artboard",
     page = "page",
-    expressRoot = "expressRoot",
-    text = "text",
-    standAloneText = "standAloneText"
+    expressRoot = "expressRoot"
 }
 
 export enum StrokePosition {

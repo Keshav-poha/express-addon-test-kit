@@ -3,14 +3,23 @@ import { MockRestrictedItemList } from "./RestrictedItemList.js";
 import { MockArtboardNode } from "./ArtboardNode.js";
 import { SceneNodeType } from "../constants.js";
 
+/**
+ * A list of artboards belonging to a single page.
+ * Always contains at least one artboard; the last one cannot be removed.
+ */
 export class MockArtboardList extends MockRestrictedItemList<MockArtboardNode> {
-    private owner: any;
+    private readonly owner: MockPageNode;
 
-    constructor(owner: any) {
+    constructor(owner: MockPageNode) {
         super();
         this.owner = owner;
     }
 
+    /**
+     * Creates and appends a new artboard to this page.
+     *
+     * @returns The newly created artboard.
+     */
     addArtboard(): MockArtboardNode {
         const artboard = new MockArtboardNode();
         artboard.parent = this.owner;
@@ -18,6 +27,12 @@ export class MockArtboardList extends MockRestrictedItemList<MockArtboardNode> {
         return artboard;
     }
 
+    /**
+     * Removes an artboard from the page.
+     *
+     * @param artboard - The artboard to remove.
+     * @throws If this is the last remaining artboard on the page.
+     */
     remove(artboard: MockArtboardNode): void {
         if (this.items.length <= 1) {
             throw new Error("Cannot remove the last remaining artboard.");
@@ -30,7 +45,12 @@ export class MockArtboardList extends MockRestrictedItemList<MockArtboardNode> {
     }
 }
 
+/**
+ * Represents a single page in the Express document.
+ * Each page has a fixed width/height and contains one or more artboards.
+ */
 export class MockPageNode extends MockBaseNode {
+    /** The artboards on this page. */
     public readonly artboards: MockArtboardList;
     private _width: number = 800;
     private _height: number = 600;
@@ -43,10 +63,11 @@ export class MockPageNode extends MockBaseNode {
         this.artboards.addArtboard();
     }
 
-    override get allChildren(): Readonly<Iterable<MockBaseNode>> {
+    override get allChildren(): Iterable<MockArtboardNode> {
         return this.artboards.toArray();
     }
 
+    /** Width of this page in pixels. */
     get width(): number {
         return this._width;
     }
@@ -58,6 +79,7 @@ export class MockPageNode extends MockBaseNode {
         this._width = val;
     }
 
+    /** Height of this page in pixels. */
     get height(): number {
         return this._height;
     }

@@ -1,10 +1,27 @@
+declare const afterEach: any;
+import { __resetMockState as resetDoc } from "@express-addon-tests/doc-sdk-mock";
+
+/**
+ * Returns the `moduleNameMapper` configuration required for Jest to redirect
+ * Adobe SDK imports to the mock implementations.
+ * 
+ * Merge this into your `jest.config.js`.
+ */
 export function getJestModuleNameMapper(): Record<string, string> {
     return {
         "^express-document-sdk$": "@express-addon-tests/doc-sdk-mock",
-        "^addOnUISdk$": "@express-addon-tests/ui-sdk-mock"
+        "^https://express\\.adobe\\.com/static/add-on-sdk/sdk\\.js$": "@express-addon-tests/ui-sdk-mock"
     };
 }
 
-export function getJestSetupFile(): string {
-    return "const { __resetMockState } = require('@express-addon-tests/doc-sdk-mock'); afterEach(() => { __resetMockState(); });";
+/**
+ * Registers global Jest hooks for the Express Add-on Test Kit.
+ * This ensures that mock state is completely reset between tests.
+ * 
+ * Call this function inside your Jest `setupFilesAfterEnv` script.
+ */
+export function setupJest(): void {
+    afterEach(() => {
+        resetDoc();
+    });
 }

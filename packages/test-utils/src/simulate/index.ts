@@ -1,4 +1,4 @@
-import { AddOnSDKAPI } from "@express-addon-tests/ui-sdk-mock";
+import { AddOnSDKAPI, MockApplication } from "@express-addon-tests/ui-sdk-mock";
 import { MockExpressContext, Node } from "@express-addon-tests/doc-sdk-mock";
 
 /**
@@ -66,7 +66,7 @@ export async function simulateSelectionChange(
     context: MockExpressContext,
     selection: Node | readonly Node[] | undefined
 ): Promise<void> {
-    context.selection = selection as any;
+    context.selection = selection;
     await flushMicrotasks();
 }
 
@@ -108,7 +108,7 @@ export async function simulateDocumentLinkAvailable(sdk: AddOnSDKAPI, link: stri
 export async function simulateDocumentPublishedLinkAvailable(sdk: AddOnSDKAPI, link: string): Promise<void> {
     const app = sdk.app as any;
     app.document.__returns.link = link;
-    app.emit("documentPublishedLinkAvailable", { link });
+    app.emit("documentPublishedLinkAvailable", { documentPublishedLink: link });
     await flushMicrotasks();
 }
 
@@ -198,8 +198,8 @@ export function setupOAuthMockSuccess(
     code: string = "mock-code",
     redirectUri: string = "https://mock.redirect/"
 ): void {
-    const oauth = sdk.app.oauth as any;
-    oauth.__setNextResponse({
+    const app = sdk.app as any;
+    app.oauth.__setNextResponse({
         id: "mock-auth-id",
         code,
         redirectUri,
@@ -208,7 +208,7 @@ export function setupOAuthMockSuccess(
             description: "Authorized"
         }
     });
-    oauth.__setNextResult({
+    app.oauth.__setNextResult({
         status: "SUCCESS",
         description: "Authorized"
     });
@@ -224,8 +224,8 @@ export function setupOAuthMockSuccess(
 export function setupOAuthMockFailure(
     sdk: AddOnSDKAPI,
     status: string,
-    description: string | object
+    description: string
 ): void {
-    const oauth = sdk.app.oauth as any;
-    oauth.__setNextFailure(status, description);
+    const app = sdk.app as any;
+    app.oauth.__setNextFailure(status, description);
 }

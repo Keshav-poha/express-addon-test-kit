@@ -2,20 +2,43 @@ import { MockNode } from "./Node.js";
 import { MockItemList } from "./ItemList.js";
 import { SceneNodeType } from "../constants.js";
 
+/**
+ * A group node that contains an ordered list of child nodes.
+ * Groups compute their bounding box from their children.
+ */
 export class MockGroupNode extends MockNode {
+    /** The direct children of this group. */
     public readonly children: MockItemList<MockNode>;
-    public maskShape: any = undefined;
+    /** Optional mask shape applied to clip the group's content. */
+    public maskShape: MockNode | undefined = undefined;
 
     constructor() {
         super(SceneNodeType.group);
         this.children = new MockItemList<MockNode>(this);
     }
 
-    override get allChildren(): Readonly<Iterable<MockNode>> {
-        return this.children.toArray();
+    /**
+     * Returns all descendants of this group via breadth-first traversal.
+     */
+    override get allChildren(): Iterable<MockNode> {
+        const result: MockNode[] = [];
+        const queue: MockNode[] = [...this.children.toArray()];
+        while (queue.length > 0) {
+            const node = queue.shift()!;
+            result.push(node);
+            for (const child of node.allChildren) {
+                if (child instanceof MockNode) {
+                    queue.push(child);
+                }
+            }
+        }
+        return result;
     }
 
-    override get boundsLocal(): Readonly<{ x: number, y: number, width: number, height: number }> {
+    /**
+     * Computes the bounding box of this group as the union of all children's bounding boxes.
+     */
+    override get boundsLocal(): Readonly<{ x: number; y: number; width: number; height: number }> {
         if (this.children.length === 0) {
             return { x: 0, y: 0, width: 0, height: 0 };
         }

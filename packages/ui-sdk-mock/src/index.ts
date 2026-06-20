@@ -2,7 +2,7 @@ import { MockApplication } from "./app.js";
 import { MockRuntime } from "./runtime.js";
 import { MockClientStorage } from "./clientStorage.js";
 import { SDKNotReadyError } from "./errors.js";
-import type { AddOnSDKAPI } from "./types.js";
+import type { AddOnSDKAPI, Application, EntrypointType } from "./types.js";
 
 export { SDKNotReadyError, UnknownRuntimeError } from "./errors.js";
 export { MockApplication } from "./app.js";
@@ -181,7 +181,7 @@ export const Constants = {
         FAILED: "FAILED",
         IFRAME_LOAD_FAILED: "IFRAME_LOAD_FAILED"
     }
-} as any;
+} as unknown as typeof import("./types.js").Constants;
 
 /**
  * Options for configuring the mock AddOnUISdk.
@@ -202,13 +202,25 @@ export interface MockAddOnUISdkOptions {
 }
 
 /**
+ * Interface defining the test-specific controls available on the mock SDK.
+ */
+export interface MockSDKControls {
+    /** Sets the delay before sdk.ready resolves, applicable only before ready is awaited. */
+    delayReady(ms: number): void;
+    /** Sets a simulated async delay for document operations. */
+    setAsyncDelay(ms: number): void;
+    /** Resets all mock states, configurations, and call logs to their initial state. */
+    resetAll(): void;
+}
+
+/**
  * Instantiates a mock Express UI SDK object (`addOnUISdk`).
  * Simulates asynchronous connection readiness and routes calls to in-process stubs.
  * 
  * @param options Initial configuration options.
  * @returns A mock implementation of AddOnSDKAPI along with test `__controls` to simulate system states.
  */
-export function createMockAddOnUISdk(options?: MockAddOnUISdkOptions): AddOnSDKAPI & { __controls: any } {
+export function createMockAddOnUISdk(options?: MockAddOnUISdkOptions): AddOnSDKAPI & { __controls: MockSDKControls } {
     let isReady = false;
     let readyDelayMs = options?.readyDelayMs ?? 0;
     let resolveReadyPromise: (() => void) | null = null;
@@ -242,33 +254,24 @@ export function createMockAddOnUISdk(options?: MockAddOnUISdkOptions): AddOnSDKA
             }
             return Reflect.get(target, prop, receiver);
         }
-    });
+    }) as unknown as Application;
 
     const sdk = {
         apiVersion: "1.0.0",
         get ready() {
             return readyPromise;
         },
-        set ready(promise: Promise<void>) {
-            readyPromise = promise;
-        },
-        app: appProxy as any,
+        app: appProxy,
         instance: {
             runtime: runtimeInstance,
             manifest: options?.manifest ?? {},
             clientStorage: clientStorageInstance,
-            entrypointType: (options?.entrypointType ?? "panel") as any
+            entrypointType: (options?.entrypointType ?? "panel") as EntrypointType
         },
         constants: Constants,
         __controls: {
             delayReady(ms: number) {
                 readyDelayMs = ms;
-                if (ms > 0) {
-                    setTimeout(() => {
-                        isReady = true;
-                        resolveReadyPromise?.();
-                    }, ms);
-                }
             },
             setAsyncDelay(ms: number) {
                 appInstance.document.__setAsyncDelay(ms);
@@ -313,9 +316,7 @@ export function createMockAddOnUISdk(options?: MockAddOnUISdkOptions): AddOnSDKA
                 appInstance.document.__calls.importPresentation = [];
                 appInstance.document.__calls.runPrintQualityCheck = [];
                 appInstance.document.__setAsyncDelay(0);
-                appInstance.oauth.__setNextResponse(null as any);
-                appInstance.oauth.__setNextResult(null as any);
-                appInstance.oauth.__setNextFailure(null as any, null as any);
+                appInstance.oauth.__reset();
                 appInstance.currentUser.__setUserId('mock-user-id');
                 appInstance.currentUser.__setIsPremiumUser(false);
                 appInstance.currentUser.__setIsAnonymousUser(false);

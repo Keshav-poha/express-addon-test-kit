@@ -7,8 +7,48 @@ import {
     LineNode,
     GroupNode,
     MockExpressEditor,
-    ExpressRootNode
+    ExpressRootNode,
+    Node,
+    Fill,
+    Stroke
 } from "@express-addon-tests/doc-sdk-mock";
+
+export interface EllipseOptions {
+    rx: number;
+    ry: number;
+    fill: Fill;
+    stroke: Stroke;
+    opacity: number;
+    locked: boolean;
+    translation: { x: number; y: number };
+}
+
+export interface RectangleOptions {
+    width: number;
+    height: number;
+    fill: Fill;
+    stroke: Stroke;
+    opacity: number;
+    locked: boolean;
+    translation: { x: number; y: number };
+}
+
+export interface TextOptions {
+    opacity: number;
+    locked: boolean;
+    translation: { x: number; y: number };
+}
+
+export interface LineOptions {
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+    stroke: Stroke;
+    opacity: number;
+    locked: boolean;
+    translation: { x: number; y: number };
+}
 
 export function createDocument(options?: { pagesCount?: number; locale?: string; theme?: string }): {
     sdk: AddOnSDKAPI & { __controls: any };
@@ -17,17 +57,17 @@ export function createDocument(options?: { pagesCount?: number; locale?: string;
 } {
     const sdk = createMockAddOnUISdk({
         entrypointType: "panel"
-    });
+    }) as AddOnSDKAPI & { __controls: any };
     
-    if (options?.locale || options?.theme) {
-        sdk.ready.then(() => {
-            if (options.locale) {
-                sdk.app.ui.__setLocale(options.locale);
-            }
-            if (options.theme) {
-                sdk.app.ui.__setTheme(options.theme as any);
-            }
-        });
+    // Set locale and theme synchronously to avoid race conditions in tests.
+    // In a real addon, these are available when ready resolves.
+    if (options?.locale) {
+        // We cast app to any to access internal __setLocale which is available on the proxy target MockApplication
+        // Note: app is MockApplication but typed as Application by the proxy
+        (sdk.app as any).ui.__setLocale(options.locale);
+    }
+    if (options?.theme) {
+        (sdk.app as any).ui.__setTheme(options.theme as any);
     }
 
     const root = editor.documentRoot;
@@ -39,7 +79,7 @@ export function createDocument(options?: { pagesCount?: number; locale?: string;
     return { sdk, editor, root };
 }
 
-export function createEllipse(options?: any): EllipseNode {
+export function createEllipse(options?: Partial<EllipseOptions>): EllipseNode {
     const node = editor.createEllipse();
     if (options) {
         if (options.rx !== undefined) node.rx = options.rx;
@@ -53,7 +93,7 @@ export function createEllipse(options?: any): EllipseNode {
     return node;
 }
 
-export function createRectangle(options?: any): RectangleNode {
+export function createRectangle(options?: Partial<RectangleOptions>): RectangleNode {
     const node = editor.createRectangle();
     if (options) {
         if (options.width !== undefined) node.width = options.width;
@@ -67,7 +107,7 @@ export function createRectangle(options?: any): RectangleNode {
     return node;
 }
 
-export function createText(content?: string, options?: any): StandaloneTextNode {
+export function createText(content?: string, options?: Partial<TextOptions>): StandaloneTextNode {
     const node = editor.createText(content ?? "");
     if (options) {
         if (options.opacity !== undefined) node.opacity = options.opacity;
@@ -77,7 +117,7 @@ export function createText(content?: string, options?: any): StandaloneTextNode 
     return node;
 }
 
-export function createLine(options?: any): LineNode {
+export function createLine(options?: Partial<LineOptions>): LineNode {
     const node = editor.createLine();
     if (options) {
         if (options.startX !== undefined && options.startY !== undefined && options.endX !== undefined && options.endY !== undefined) {
@@ -91,7 +131,7 @@ export function createLine(options?: any): LineNode {
     return node;
 }
 
-export function createGroup(children?: any[]): GroupNode {
+export function createGroup(children?: Node[]): GroupNode {
     const node = editor.createGroup();
     if (children) {
         node.children.append(...children);

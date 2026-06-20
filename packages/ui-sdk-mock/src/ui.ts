@@ -1,5 +1,8 @@
 import type { UI, UiTheme, EditorPanel, PanelAction } from "./types.js";
 
+/**
+ * Mock implementation of the UI middleware.
+ */
 export class MockUI implements UI {
     private _locale: string = 'en-US';
     private _theme: UiTheme = 'light';

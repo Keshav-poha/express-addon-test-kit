@@ -1,5 +1,8 @@
 import type { CurrentUser } from "./types.js";
 
+/**
+ * Mock implementation of the CurrentUser middleware.
+ */
 export class MockCurrentUser implements CurrentUser {
     private _userId: string = 'mock-user-id';
     private _isPremiumUser: boolean = false;

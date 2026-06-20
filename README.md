@@ -2,15 +2,27 @@
 
 > **Express Add-on Test Kit** — A production-quality monorepo designed for testing Express add-ons in dual-runtime environments (Iframe UI and Document Sandbox) directly in Node.js/jsdom environments (e.g., using Vitest or Jest).
 
+Testing Adobe Express add-ons historically required complex end-to-end setups (like Playwright or Puppeteer) or writing manual stubs for every single SDK method. Because the real `addOnUISdk` and `express-document-sdk` are not available in a pure Node.js environment, developers struggle to write fast, reliable unit and integration tests. `@express-addon-tests` solves this problem by providing high-fidelity, in-process, synchronous mocks, factories, event simulators, and a mock RPC bridge that links the runtimes together.
+
 ---
 
 ## Overview
 
 Express Add-ons operate across two distinct runtimes:
 1. **Iframe UI Runtime**: The visual interface running in an iframe, interacting with the host via `addOnUISdk`.
-2. **Document Sandbox Runtime**: The headless javascript sandbox executing edits on the Express scenegraph.
+2. **Document Sandbox Runtime**: The headless javascript sandbox executing edits on the Express scenegraph via `express-document-sdk`.
 
-Testing these runtimes historically required complex end-to-end setups (like Playwright or Puppeteer) or writing manual stubs. `@express-addon-tests` solves this by providing high-fidelity, in-process, synchronous mocks, factories, event simulators, and a mock RPC bridge that links the runtimes together.
+### Architecture
+
+```text
++-------------------------+                           +-------------------------+
+|     Iframe UI Runtime   |                           | Document Sandbox Runtime|
+|  (React/Vue/Vanilla UI) |                           |    (Scenegraph Edits)   |
++-------------------------+                           +-------------------------+
+|       addOnUISdk        |       test-bridge         |   express-document-sdk  |
+|  (ui-sdk-mock stubbed)  | <-----------------------> | (doc-sdk-mock stubbed)  |
++-------------------------+        (Comlink)          +-------------------------+
+```
 
 ---
 
@@ -44,13 +56,24 @@ npm install --save-dev @express-addon-tests/ui-sdk-mock @express-addon-tests/doc
 Initialize the environment variables and mock global objects required by the SDK before running your tests.
 
 #### Using Vitest
-In your test files (or inside a setup file):
-
+In your `vitest.config.ts`, include the alias resolutions:
 ```typescript
-import { beforeAll, beforeEach } from "vitest";
+import { defineConfig } from "vitest/config";
+import { getVitestConfig } from "@express-addon-tests/test-utils/setup/vitest";
+
+export default defineConfig({
+    test: {
+        setupFiles: ["./test-setup.ts"]
+    },
+    ...getVitestConfig()
+});
+```
+
+And in your `test-setup.ts`:
+```typescript
 import { setupVitest } from "@express-addon-tests/test-utils/setup/vitest";
 
-// Register mocks on globalThis
+// Register hooks to clear mock state after each test
 setupVitest();
 ```
 
@@ -117,6 +140,7 @@ Test the complete flow between your Iframe UI (sending requests) and Document Sa
 ```typescript
 import { createBridge } from "@express-addon-tests/test-bridge";
 import { createDocument } from "@express-addon-tests/test-utils";
+import { editor } from "@express-addon-tests/doc-sdk-mock";
 
 // 1. Define your Sandbox APIs
 const sandboxApi = {
@@ -131,18 +155,18 @@ const sandboxApi = {
 };
 
 it("should coordinate edits from Iframe through the bridge", async () => {
-    const { sdk, editor } = createDocument();
+    const { sdk } = createDocument();
     await sdk.ready;
 
     // 2. Instantiate bridge linking iframe mock & sandbox API
     const { iframeRuntime, sandboxRuntime } = createBridge();
     
     // Wire up implementations
-    sandboxRuntime.expose(sandboxApi);
-    sdk.instance.runtime.expose(iframeRuntime.remote);
+    sandboxRuntime.exposeApi(sandboxApi);
+    sdk.instance.runtime.exposeApi(sandboxApi); // Normally, the UI runtime exposes its own UI API if needed
 
     // 3. Iframe calls Remote API (wrapped inside Promisified Proxy)
-    const remoteSandbox = iframeRuntime.remote;
+    const remoteSandbox = await iframeRuntime.apiProxy<typeof sandboxApi>("documentSandbox");
     const circleId = await remoteSandbox.createCircleAndSelect(40);
 
     // 4. Assert sandbox state
@@ -150,6 +174,16 @@ it("should coordinate edits from Iframe through the bridge", async () => {
     expect(editor.context.selection[0]?.id).toBe(circleId);
 });
 ```
+
+---
+
+## Known Gaps (How Mocks Differ From Real SDK)
+
+While `@express-addon-tests` provides a very high-fidelity mock, it is a synchronous Node.js environment simulation.
+Be aware of the following differences:
+- **Geometry and Layout**: The mock scenegraph does not implement a full 2D layout engine. Calling `boundsInNode` or complex transformation logic will yield approximate or un-rotated bounds.
+- **Asynchronous Operations**: In the real Express environment, most `editor.queueAsyncEdit` operations invoke WASM-backed engines and occur asynchronously across message boundaries. In the mock, mutations happen via simple microtask queuing or even synchronously if test controls dictate.
+- **Node Validation**: The real SDK throws errors if properties are set out of bounds for the particular node type in complex ways. The mock validates basic ranges (like opacity 0-1) but may allow structurally invalid scenegraphs to be formed during tests.
 
 ---
 
@@ -180,4 +214,4 @@ it("should coordinate edits from Iframe through the bridge", async () => {
 
 ## License
 
-MIT © Copyright 2026 Keshav. All rights reserved.
+MIT © Copyright 2026. All rights reserved.

@@ -1,5 +1,8 @@
 import type { ClientStorage } from "./types.js";
 
+/**
+ * Mock implementation of the ClientStorage middleware.
+ */
 export class MockClientStorage implements ClientStorage {
     private storage = new Map<string, unknown>();
 

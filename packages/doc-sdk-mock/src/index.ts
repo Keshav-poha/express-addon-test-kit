@@ -26,6 +26,11 @@ export {
     OrderedListNumbering
 } from "./constants.js";
 
+export type { Color } from "./colorUtils.js";
+export type { MockFill as Fill } from "./scenegraph/FillableNode.js";
+export type { MockStroke as Stroke } from "./scenegraph/StrokableNode.js";
+export type { StrokeOptions } from "./editor.js";
+
 export { MockBaseNode as BaseNode } from "./scenegraph/BaseNode.js";
 export { MockVisualNode as VisualNode } from "./scenegraph/VisualNode.js";
 export { MockNode as Node } from "./scenegraph/Node.js";
@@ -45,7 +50,11 @@ export { MockExpressRootNode as ExpressRootNode } from "./scenegraph/ExpressRoot
 export { MockExpressEditor } from "./editor.js";
 export { MockExpressContext } from "./context.js";
 
-export function __resetMockState() {
+/**
+ * Resets all doc-sdk-mock singletons to their initial state.
+ * Call this in `afterEach` (or use `setupVitest()` which calls it automatically).
+ */
+export function __resetMockState(): void {
     editor.__resetMockState();
     fonts.__reset();
     viewport.__calls.bringIntoView = [];

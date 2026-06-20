@@ -5,6 +5,7 @@ coverage/
 .turbo/
 *.log
 CLAUDE.MD
+AUDIT.MD
 
 # Compiled outputs from local compiler/IDE builds
 packages/**/*.js
