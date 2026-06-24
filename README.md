@@ -1,6 +1,6 @@
 # `@express-addon-tests`
 
-> **Express Add-on Test Kit** — A production-quality monorepo designed for testing Express add-ons in dual-runtime environments (Iframe UI and Document Sandbox) directly in Node.js/jsdom environments (e.g., using Vitest or Jest).
+> **Express Add-on Test Kit** — A monorepo designed for testing Express add-ons in dual-runtime environments (Iframe UI and Document Sandbox) directly in Node.js/jsdom environments (e.g., using Vitest or Jest).
 
 Testing Adobe Express add-ons historically required complex end-to-end setups (like Playwright or Puppeteer) or writing manual stubs for every single SDK method. Because the real `addOnUISdk` and `express-document-sdk` are not available in a pure Node.js environment, developers struggle to write fast, reliable unit and integration tests. `@express-addon-tests` solves this problem by providing high-fidelity, in-process, synchronous mocks, factories, event simulators, and a mock RPC bridge that links the runtimes together.
 
